@@ -26,9 +26,10 @@ export default function LoginPage() {
       console.log('Email:', email)
       console.log('Password length:', password.length)
       await login(email, password)
-      console.log('Login successful, calling router.push(/dashboard)')
-      router.push('/dashboard')
-      console.log('Router push called')
+      console.log('Login successful, waiting 500ms for auth state to update')
+      await new Promise(resolve => setTimeout(resolve, 500))
+      console.log('Redirecting to dashboard')
+      window.location.href = '/dashboard'
     } catch (err: any) {
       console.error('Login error:', err)
       if (err.message?.includes('Invalid login credentials')) {
