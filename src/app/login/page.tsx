@@ -27,7 +27,9 @@ export default function LoginPage() {
       if (err.message?.includes('Invalid login credentials')) {
         setError('Invalid email or password')
       } else if (err.message?.includes('Email not confirmed')) {
-        setError('Please confirm your email address')
+        setError('Please confirm your email address. Contact an admin if needed.')
+      } else if (err.message?.includes('Invalid path')) {
+        setError('Authentication service error. Please try again.')
       } else {
         setError(err.message || 'Login failed. Please try again.')
       }
