@@ -4,6 +4,14 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+
+// Create a Supabase client with service role key for admin operations
+// Uses environment variable to avoid hardcoding secrets
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL || 'https://vdoqwihhpdconsijmjxh.supabase.co',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+)
 
 // GET /api/employees - Fetch all employees with optional filtering
 // Query params: ?status=active (optional) - filter by status
@@ -62,8 +70,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Insert new employee into database
-    const { data, error } = await supabase
+    // Insert new employee into database using admin client to bypass RLS
+    const { data, error } = await supabaseAdmin
       .from('employees')
       .insert({
         employee_id: body.employee_id,
