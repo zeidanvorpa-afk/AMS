@@ -16,6 +16,19 @@ export default function PeoplePage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [formError, setFormError] = useState('')
+
+  // Form state for new employee
+  const [newEmployee, setNewEmployee] = useState({
+    employee_id: '',
+    first_name: '',
+    last_name: '',
+    email: '',
+    department: '',
+    position: '',
+    hire_date: ''
+  })
 
   // Fetch employees on component mount
   useEffect(() => {
@@ -34,6 +47,60 @@ export default function PeoplePage() {
       console.error('Error fetching employees:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewEmployee({
+      ...newEmployee,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  // Handle form submission
+  const handleAddEmployee = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setFormError('')
+    setSubmitting(true)
+
+    try {
+      // Generate employee ID if not provided
+      const employeeId = newEmployee.employee_id || `EMP${String(employees.length + 1).padStart(3, '0')}`
+
+      const response = await fetch('/api/employees', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...newEmployee,
+          employee_id: employeeId
+        })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to add employee')
+      }
+
+      // Refresh employee list
+      await fetchEmployees()
+
+      // Close modal and reset form
+      setShowAddModal(false)
+      setNewEmployee({
+        employee_id: '',
+        first_name: '',
+        last_name: '',
+        email: '',
+        department: '',
+        position: '',
+        hire_date: ''
+      })
+    } catch (error: any) {
+      console.error('Error adding employee:', error)
+      setFormError(error.message || 'Failed to add employee')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -168,46 +235,93 @@ export default function PeoplePage() {
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl max-w-lg w-full p-6 border border-white/10">
             <h2 className="text-xl font-semibold text-white mb-4">Add Employee</h2>
-            <form className="space-y-4">
+            <form onSubmit={handleAddEmployee} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1">First Name</label>
-                  <input type="text" className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400" />
+                  <input
+                    type="text"
+                    name="first_name"
+                    value={newEmployee.first_name}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
+                    required
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1">Last Name</label>
-                  <input type="text" className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400" />
+                  <input
+                    type="text"
+                    name="last_name"
+                    value={newEmployee.last_name}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
+                    required
+                  />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
-                <input type="email" className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400" />
+                <input
+                  type="email"
+                  name="email"
+                  value={newEmployee.email}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
+                  required
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Department</label>
-                <input type="text" className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400" />
+                <input
+                  type="text"
+                  name="department"
+                  value={newEmployee.department}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
+                  required
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Position</label>
-                <input type="text" className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400" />
+                <input
+                  type="text"
+                  name="position"
+                  value={newEmployee.position}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
+                  required
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Hire Date</label>
-                <input type="date" className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white" />
+                <input
+                  type="date"
+                  name="hire_date"
+                  value={newEmployee.hire_date}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
+                  required
+                />
               </div>
+              {formError && (
+                <div className="text-red-400 text-sm">{formError}</div>
+              )}
               <div className="flex gap-3 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
                   className="flex-1 px-4 py-2 border border-white/10 rounded-lg hover:bg-white/10 transition-colors text-white"
+                  disabled={submitting}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all"
+                  disabled={submitting}
                 >
-                  Add Employee
+                  {submitting ? 'Adding...' : 'Add Employee'}
                 </button>
               </div>
             </form>
