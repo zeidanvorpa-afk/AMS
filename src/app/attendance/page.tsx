@@ -69,6 +69,12 @@ export default function AttendancePage() {
     }))
   }
 
+  // Get employee UUID by employee_id string
+  const getEmployeeUUID = (employeeIdStr: string) => {
+    const employee = employees.find(emp => emp.employee_id === employeeIdStr)
+    return employee?.id
+  }
+
   // Save all attendance records to the database via bulk API route
   const handleSave = async () => {
     setSaving(true)
@@ -76,15 +82,23 @@ export default function AttendancePage() {
       if (!user) throw new Error('Not authenticated')
 
       // Prepare attendance records for bulk upsert
-      const records = Object.entries(attendanceData).map(([employeeId, status]) => ({
-        employee_id: employeeId,
-        date: selectedDate,
-        status,
-        marked_by: user.id,
-        check_in_time: status === 'present' || status === 'late' ? '09:00' : null,
-        check_out_time: null,
-        notes: null
-      }))
+      // Need to map employee_id string to employee UUID for database reference
+      const records = Object.entries(attendanceData).map(([employeeIdStr, status]) => {
+        const employeeUUID = getEmployeeUUID(employeeIdStr)
+        if (!employeeUUID) {
+          console.error('Employee not found:', employeeIdStr)
+          return null
+        }
+        return {
+          employee_id: employeeUUID,  // Use UUID from employees table
+          date: selectedDate,
+          status,
+          marked_by: user.id,  // This should be the user UUID from auth
+          check_in_time: status === 'present' || status === 'late' ? '09:00' : null,
+          check_out_time: null,
+          notes: null
+        }
+      }).filter(record => record !== null)
 
       // Use bulk API endpoint for efficient upsert
       const response = await fetch('/api/attendance/bulk', {
@@ -94,7 +108,9 @@ export default function AttendancePage() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to save attendance')
+        const errorData = await response.json()
+        console.error('Attendance save error:', errorData)
+        throw new Error(errorData.error || 'Failed to save attendance')
       }
 
       alert('Attendance saved successfully!')

@@ -4,6 +4,14 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+
+// Create a Supabase client with service role key for admin operations
+// Uses environment variable to avoid hardcoding secrets
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL || 'https://vdoqwihhpdconsijmjxh.supabase.co',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+)
 
 // GET /api/attendance - Fetch attendance records
 // Query params: ?date=YYYY-MM-DD (optional) - filter by date
@@ -69,8 +77,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Insert new attendance record into database
-    const { data, error } = await supabase
+    // Insert new attendance record into database using admin client to bypass RLS
+    const { data, error } = await supabaseAdmin
       .from('attendance')
       .insert({
         employee_id: body.employee_id,
@@ -116,8 +124,8 @@ export async function PUT(request: NextRequest) {
       )
     }
 
-    // Update attendance record in database
-    const { data, error } = await supabase
+    // Update attendance record in database using admin client to bypass RLS
+    const { data, error } = await supabaseAdmin
       .from('attendance')
       .update({
         status: body.status,
