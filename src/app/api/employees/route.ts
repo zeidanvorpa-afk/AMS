@@ -21,8 +21,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get('status')
 
-    // Build Supabase query
-    let query = supabase.from('employees').select('*')
+    // Build Supabase query using admin client to bypass RLS
+    let query = supabaseAdmin.from('employees').select('*')
 
     // Add status filter if provided
     if (status) {

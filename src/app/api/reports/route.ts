@@ -4,6 +4,14 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+
+// Create a Supabase client with service role key for admin operations
+// Uses environment variable to avoid hardcoding secrets
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL || 'https://vdoqwihhpdconsijmjxh.supabase.co',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+)
 
 // GET /api/reports - Fetch attendance data for reports
 // Query params: ?month=YYYY-MM (optional) - filter by month
@@ -15,8 +23,8 @@ export async function GET(request: NextRequest) {
     const month = searchParams.get('month')  // Format: YYYY-MM
     const year = searchParams.get('year')      // Format: YYYY
 
-    // Build Supabase query
-    let query = supabase
+    // Build Supabase query using admin client to bypass RLS
+    let query = supabaseAdmin
       .from('attendance')
       .select(`
         *,

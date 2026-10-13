@@ -4,6 +4,14 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+
+// Create a Supabase client with service role key for admin operations
+// Uses environment variable to avoid hardcoding secrets
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL || 'https://vdoqwihhpdconsijmjxh.supabase.co',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+)
 
 // GET /api/dashboard/stats - Fetch dashboard statistics
 // Returns aggregated attendance data for the current day
@@ -12,8 +20,8 @@ export async function GET(request: NextRequest) {
     // Get today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0]
 
-    // Get total number of active employees
-    const { count: totalEmployees, error: employeesError } = await supabase
+    // Get total number of active employees using admin client to bypass RLS
+    const { count: totalEmployees, error: employeesError } = await supabaseAdmin
       .from('employees')
       .select('*', { count: 'exact', head: true })
       .eq('status', 'active')
@@ -25,8 +33,8 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Get all attendance records for today
-    const { data: attendanceData, error: attendanceError } = await supabase
+    // Get all attendance records for today using admin client to bypass RLS
+    const { data: attendanceData, error: attendanceError } = await supabaseAdmin
       .from('attendance')
       .select('status')
       .eq('date', today)
