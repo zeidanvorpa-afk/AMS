@@ -2,6 +2,19 @@
 
 Follow these steps to set up AMS from scratch.
 
+## Why Login/Signup?
+
+AMS requires authentication because:
+- **Role-based access**: Admins, Managers, and Users have different permissions
+- **Data security**: Attendance records and employee data must be protected
+- **Accountability**: Track who marked attendance and made changes
+
+## Authentication Options:
+
+1. **Sign Up**: New users can create their own account at `/signup` (gets 'user' role)
+2. **Admin Account**: First admin must be created manually (see Step 4)
+3. **Role Changes**: Admins can promote users to Manager/Admin in the database
+
 ## Step 1: Environment Variables
 
 Create a `.env.local` file in the project root:

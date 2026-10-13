@@ -4,12 +4,22 @@ A modern attendance management system built with Next.js, React, TypeScript, Tai
 
 ## Features
 
+- **Authentication**: Sign up and login with role-based access control
 - **Dashboard**: Overview of attendance metrics, quick stats, and recent activity
 - **People Management**: Add, edit, and manage employees with role-based access
 - **Attendance Recording**: Manual attendance marking by admins and managers
 - **Reports**: Monthly attendance summaries with CSV export functionality
 - **Role-Based Access**: Admin, Manager, and User roles with different permissions
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
+
+## Authentication
+
+- **Sign Up**: New users can create accounts at `/signup` (default role: user)
+- **Login**: Existing users sign in at `/login`
+- **Roles**:
+  - **Admin**: Full access to all features
+  - **Manager**: Can manage employees and mark attendance
+  - **User**: Can view their own attendance and reports
 
 ## Tech Stack
 
