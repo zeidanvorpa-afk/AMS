@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const { login } = useAuth()
   const router = useRouter()
 
@@ -18,9 +19,12 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
+    setIsSubmitting(true)
 
     try {
+      console.log('Attempting login with:', email)
       await login(email, password)
+      console.log('Login successful, redirecting to dashboard')
       router.push('/dashboard')
     } catch (err: any) {
       console.error('Login error:', err)
@@ -35,6 +39,7 @@ export default function LoginPage() {
       }
     } finally {
       setLoading(false)
+      setIsSubmitting(false)
     }
   }
 
@@ -68,6 +73,7 @@ export default function LoginPage() {
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="you@example.com"
+                autoComplete="off"
               />
             </div>
 
@@ -84,6 +90,7 @@ export default function LoginPage() {
                   required
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
                   placeholder="••••••••"
+                  autoComplete="off"
                 />
                 <button
                   type="button"
