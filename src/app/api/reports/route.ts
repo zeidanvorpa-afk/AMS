@@ -29,6 +29,7 @@ export async function GET(request: NextRequest) {
       .select(`
         *,
         employees (
+          id,
           employee_id,
           first_name,
           last_name,
