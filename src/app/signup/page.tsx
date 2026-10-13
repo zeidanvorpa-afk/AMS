@@ -23,26 +23,41 @@ export default function SignupPage() {
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/login`,
+          data: {
+            full_name: fullName
+          }
+        }
       })
 
       if (authError) throw authError
-      if (!authData.user) throw new Error('Failed to create user')
 
-      // 2. Create user record in public.users table
-      const { error: dbError } = await supabase
-        .from('users')
-        .insert({
-          id: authData.user.id,
-          email,
-          full_name: fullName,
-          role: 'user' // Default role for signups
-        })
+      // 2. If user created successfully, create database record
+      if (authData.user) {
+        console.log('Auth user created:', authData.user.id)
 
-      if (dbError) throw dbError
+        // Try to create user record
+        const { error: dbError } = await supabase
+          .from('users')
+          .insert({
+            id: authData.user.id,
+            email,
+            full_name: fullName,
+            role: 'user'
+          })
+
+        if (dbError) {
+          console.error('Database error:', dbError)
+          // Don't throw - auth user was created, user can still login
+          // Admin can manually add the role later if needed
+        }
+      }
 
       // 3. Redirect to login
-      router.push('/login?signup=success')
+      window.location.href = '/login?signup=success'
     } catch (err: any) {
+      console.error('Signup error:', err)
       setError(err.message || 'Signup failed')
     } finally {
       setLoading(false)

@@ -41,7 +41,7 @@ export default function Header({ title, subtitle, onLogout }: HeaderProps) {
 
                 {/* Notification Dropdown */}
                 {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 bg-slate-900/95 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl z-50">
+                  <div className="absolute right-0 mt-2 w-80 bg-slate-900/95 backdrop-blur-xl rounded-xl border border-white/10 shadow-2xl z-[9999]">
                     <div className="p-4 border-b border-white/10">
                       <h3 className="text-sm font-semibold text-white">Notifications</h3>
                     </div>
