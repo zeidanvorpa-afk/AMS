@@ -1,18 +1,21 @@
 'use client'
 
+// Reports Page - Attendance analytics and data export
+// Displays monthly attendance summaries with CSV export functionality
+// Uses backend API routes for all data operations
+
 import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { Download, Calendar, Filter, TrendingUp, TrendingDown } from 'lucide-react'
 
 export default function ReportsPage() {
-  // Reports page for attendance analytics
   const { userRole, logout } = useAuth()
   const [selectedMonth, setSelectedMonth] = useState('')
   const [reportData, setReportData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
+  // Fetch report data when month changes
   useEffect(() => {
     if (!selectedMonth) {
       setSelectedMonth(new Date().toISOString().slice(0, 7))
@@ -21,25 +24,14 @@ export default function ReportsPage() {
     }
   }, [selectedMonth])
 
+  // Fetch report data from API route
   const fetchReportData = async () => {
     try {
-      const { data, error } = await supabase
-        .from('attendance')
-        .select(`
-          *,
-          employees (
-            employee_id,
-            first_name,
-            last_name,
-            department
-          )
-        `)
-        .gte('date', `${selectedMonth}-01`)
-        .lte('date', `${selectedMonth}-31`)
-        .order('date', { ascending: true })
+      const response = await fetch(`/api/reports?month=${selectedMonth}`)
+      if (!response.ok) throw new Error('Failed to fetch report data')
 
-      if (error) throw error
-      setReportData(data || [])
+      const { data } = await response.json()
+      setReportData(data.records || [])
     } catch (error) {
       console.error('Error fetching report data:', error)
     } finally {

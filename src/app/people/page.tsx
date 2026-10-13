@@ -1,9 +1,12 @@
 'use client'
 
+// People Page - Employee management and listing
+// Displays all employees with search functionality and add employee modal
+// Uses backend API routes for all data operations
+
 import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { Employee } from '@/types/database'
 import { Plus, Search, Edit, Trash2, MoreVertical } from 'lucide-react'
 
@@ -14,18 +17,18 @@ export default function PeoplePage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
 
+  // Fetch employees on component mount
   useEffect(() => {
     fetchEmployees()
   }, [])
 
+  // Fetch employees from API route
   const fetchEmployees = async () => {
     try {
-      const { data, error } = await supabase
-        .from('employees')
-        .select('*')
-        .order('created_at', { ascending: false })
+      const response = await fetch('/api/employees')
+      if (!response.ok) throw new Error('Failed to fetch employees')
 
-      if (error) throw error
+      const { data } = await response.json()
       setEmployees(data || [])
     } catch (error) {
       console.error('Error fetching employees:', error)

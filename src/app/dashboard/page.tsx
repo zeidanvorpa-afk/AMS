@@ -1,5 +1,9 @@
 'use client'
 
+// Dashboard Page - Main overview page showing attendance statistics
+// Displays key metrics, quick actions, and navigation to other features
+// Fetches real-time data from the backend API routes
+
 import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import {
@@ -15,13 +19,14 @@ import {
   BarChart3
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
 import { DashboardStats } from '@/types/database'
 import { useRouter } from 'next/navigation'
 
 export default function DashboardPage() {
-  const { userRole, logout } = useAuth()
-  const router = useRouter()
+  const { userRole, logout } = useAuth()  // Get auth state and logout function
+  const router = useRouter()  // Next.js router for navigation
+
+  // State for dashboard statistics
   const [stats, setStats] = useState<DashboardStats>({
     total_employees: 0,
     expected_today: 0,
@@ -30,42 +35,35 @@ export default function DashboardPage() {
     late_today: 0,
     attendance_rate: 0
   })
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)  // Loading state for data fetch
 
+  // Fetch dashboard statistics on component mount
   useEffect(() => {
     console.log('Dashboard: useEffect called, userRole:', userRole)
     fetchDashboardStats()
   }, [])
 
+  // Fetch attendance statistics from the API route (backend layer)
   const fetchDashboardStats = async () => {
     try {
-      const today = new Date().toISOString().split('T')[0]
+      // Call the API route instead of Supabase directly
+      // This follows the proper architecture: Frontend -> API Route -> Database
+      const response = await fetch('/api/dashboard/stats')
 
-      // Get total employees
-      const { count: totalEmployees } = await supabase
-        .from('employees')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'active')
+      if (!response.ok) {
+        throw new Error('Failed to fetch dashboard stats')
+      }
 
-      // Get today's attendance
-      const { data: attendanceData } = await supabase
-        .from('attendance')
-        .select('status')
-        .eq('date', today)
+      const { data } = await response.json()
 
-      const present = attendanceData?.filter(a => a.status === 'present').length || 0
-      const absent = attendanceData?.filter(a => a.status === 'absent').length || 0
-      const late = attendanceData?.filter(a => a.status === 'late').length || 0
-      const expected = totalEmployees || 0
-      const rate = expected > 0 ? Math.round((present / expected) * 100) : 0
-
+      // Update state with statistics from API
       setStats({
-        total_employees: totalEmployees || 0,
-        expected_today: expected,
-        present_today: present,
-        absent_today: absent,
-        late_today: late,
-        attendance_rate: rate
+        total_employees: data.total_employees,
+        expected_today: data.expected_today,
+        present_today: data.present_today,
+        absent_today: data.absent_today,
+        late_today: data.late_today,
+        attendance_rate: data.attendance_rate
       })
     } catch (error) {
       console.error('Error fetching dashboard stats:', error)
@@ -74,6 +72,8 @@ export default function DashboardPage() {
     }
   }
 
+  // Define statistics cards configuration
+  // Each card displays a different metric with icon, color, and trend indicator
   const statCards = [
     {
       title: 'Total Employees',
@@ -137,6 +137,7 @@ export default function DashboardPage() {
     }
   ]
 
+  // Show loading spinner while fetching data
   if (loading) {
     return (
       <AppLayout
@@ -152,6 +153,7 @@ export default function DashboardPage() {
     )
   }
 
+  // Main dashboard content
   return (
     <AppLayout
       title="Dashboard"
@@ -159,7 +161,7 @@ export default function DashboardPage() {
       userRole={userRole!}
       onLogout={logout}
     >
-      {/* Stats Grid - positioned at top */}
+      {/* Statistics grid - displays all key metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {statCards.map((stat) => (
           <div
@@ -170,6 +172,7 @@ export default function DashboardPage() {
               <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} shadow-lg`}>
                 <stat.icon className="w-6 h-6 text-white" />
               </div>
+              {/* Trend indicator (optional) */}
               {stat.trend && (
                 <div className={`flex items-center gap-1 text-sm font-medium ${
                   stat.trendUp ? 'text-green-400' : 'text-red-400'
@@ -189,7 +192,7 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      {/* Quick Actions */}
+      {/* Quick actions section - provides shortcuts to common tasks */}
       <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 mb-8">
         <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

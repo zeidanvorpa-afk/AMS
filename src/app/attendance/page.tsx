@@ -1,20 +1,24 @@
 'use client'
 
+// Attendance Page - Mark daily attendance for employees
+// Allows selecting a date and marking attendance status for each employee
+// Uses backend API routes for all data operations
+
 import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
 import { Employee, AttendanceStatus } from '@/types/database'
 import { Calendar, Check, X, Clock, FileText, Save } from 'lucide-react'
 
 export default function AttendancePage() {
-  const { userRole, logout } = useAuth()
+  const { user, userRole, logout } = useAuth()
   const [employees, setEmployees] = useState<Employee[]>([])
   const [selectedDate, setSelectedDate] = useState('')
   const [attendanceData, setAttendanceData] = useState<Record<string, AttendanceStatus>>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
+  // Fetch employees and attendance when date changes
   useEffect(() => {
     if (!selectedDate) {
       setSelectedDate(new Date().toISOString().split('T')[0])
@@ -24,15 +28,13 @@ export default function AttendancePage() {
     }
   }, [selectedDate])
 
+  // Fetch employees from API route
   const fetchEmployees = async () => {
     try {
-      const { data, error } = await supabase
-        .from('employees')
-        .select('*')
-        .eq('status', 'active')
-        .order('last_name', { ascending: true })
+      const response = await fetch('/api/employees?status=active')
+      if (!response.ok) throw new Error('Failed to fetch employees')
 
-      if (error) throw error
+      const { data } = await response.json()
       setEmployees(data || [])
     } catch (error) {
       console.error('Error fetching employees:', error)
@@ -41,17 +43,16 @@ export default function AttendancePage() {
     }
   }
 
+  // Fetch attendance records for selected date from API route
   const fetchAttendance = async () => {
     try {
-      const { data, error } = await supabase
-        .from('attendance')
-        .select('employee_id, status')
-        .eq('date', selectedDate)
+      const response = await fetch(`/api/attendance?date=${selectedDate}`)
+      if (!response.ok) throw new Error('Failed to fetch attendance')
 
-      if (error) throw error
+      const { data } = await response.json()
 
       const attendanceMap: Record<string, AttendanceStatus> = {}
-      data?.forEach(record => {
+      data?.forEach((record: any) => {
         attendanceMap[record.employee_id] = record.status
       })
       setAttendanceData(attendanceMap)
@@ -60,6 +61,7 @@ export default function AttendancePage() {
     }
   }
 
+  // Update attendance status for a specific employee (local state only)
   const handleStatusChange = (employeeId: string, status: AttendanceStatus) => {
     setAttendanceData(prev => ({
       ...prev,
@@ -67,26 +69,32 @@ export default function AttendancePage() {
     }))
   }
 
+  // Save all attendance records to the database via bulk API route
   const handleSave = async () => {
     setSaving(true)
     try {
-      const user = (await supabase.auth.getUser()).data.user
       if (!user) throw new Error('Not authenticated')
 
-      for (const [employeeId, status] of Object.entries(attendanceData)) {
-        await supabase
-          .from('attendance')
-          .upsert({
-            employee_id: employeeId,
-            date: selectedDate,
-            status,
-            marked_by: user.id,
-            check_in_time: status === 'present' || status === 'late' ? '09:00' : null,
-            check_out_time: null,
-            notes: null
-          }, {
-            onConflict: 'employee_id,date'
-          })
+      // Prepare attendance records for bulk upsert
+      const records = Object.entries(attendanceData).map(([employeeId, status]) => ({
+        employee_id: employeeId,
+        date: selectedDate,
+        status,
+        marked_by: user.id,
+        check_in_time: status === 'present' || status === 'late' ? '09:00' : null,
+        check_out_time: null,
+        notes: null
+      }))
+
+      // Use bulk API endpoint for efficient upsert
+      const response = await fetch('/api/attendance/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ records })
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to save attendance')
       }
 
       alert('Attendance saved successfully!')

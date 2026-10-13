@@ -1,5 +1,9 @@
 'use client'
 
+// Sidebar Component - Navigation sidebar with role-based menu items
+// Displays navigation links based on user's role (admin, manager, or user)
+// Responsive design with mobile hamburger menu and desktop fixed sidebar
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -12,15 +16,17 @@ import {
 } from 'lucide-react'
 import { useState } from 'react'
 
+// Props interface for the Sidebar component
 interface SidebarProps {
-  userRole: 'admin' | 'manager' | 'user'
-  onLogout: () => void
+  userRole: 'admin' | 'manager' | 'user'  // User's role for filtering navigation
+  onLogout: () => void                     // Logout function
 }
 
 export default function Sidebar({ userRole, onLogout }: SidebarProps) {
-  const pathname = usePathname()
-  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname()  // Get current route path for active state
+  const [isOpen, setIsOpen] = useState(false)  // Mobile menu open/close state
 
+  // Navigation menu items with role-based access control
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard, roles: ['admin', 'manager', 'user'] },
     { name: 'People', href: '/people', icon: Users, roles: ['admin', 'manager'] },
@@ -28,11 +34,12 @@ export default function Sidebar({ userRole, onLogout }: SidebarProps) {
     { name: 'Reports', href: '/reports', icon: BarChart3, roles: ['admin', 'manager', 'user'] },
   ]
 
+  // Filter navigation items based on user's role
   const filteredNavigation = navigation.filter(item => item.roles.includes(userRole))
 
   return (
     <>
-      {/* Mobile menu button */}
+      {/* Mobile menu button - hamburger icon that toggles sidebar */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-md"
@@ -40,7 +47,7 @@ export default function Sidebar({ userRole, onLogout }: SidebarProps) {
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
-      {/* Overlay for mobile */}
+      {/* Overlay for mobile - dark backdrop when sidebar is open on mobile */}
       {isOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/50 z-40"
@@ -48,16 +55,16 @@ export default function Sidebar({ userRole, onLogout }: SidebarProps) {
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - Fixed on desktop, slide-in on mobile */}
       <aside
         className={`
           fixed top-0 left-0 h-full w-64 bg-slate-900/80 backdrop-blur-xl text-white
-          transform transition-transform duration-300 ease-in-out z-50 border-r border-white/10
+          transform transition-transform duration-300 ease-in-out z-30 border-r border-white/10
           ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
         `}
       >
         <div className="flex flex-col h-full">
-          {/* Logo */}
+          {/* Logo section with AMS branding */}
           <div className="p-6 border-b border-white/10">
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -74,20 +81,20 @@ export default function Sidebar({ userRole, onLogout }: SidebarProps) {
             </div>
           </div>
 
-          {/* Navigation */}
+          {/* Navigation menu - filtered by user role */}
           <nav className="flex-1 p-4 space-y-2">
             {filteredNavigation.map((item) => {
-              const isActive = pathname === item.href
+              const isActive = pathname === item.href  // Check if this is the active route
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  onClick={() => setIsOpen(false)}
+                  onClick={() => setIsOpen(false)}  // Close mobile menu on navigation
                   className={`
                     flex items-center gap-3 px-4 py-3 rounded-lg transition-colors
-                    ${isActive 
-                      ? 'bg-slate-800 text-white' 
-                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ${isActive
+                      ? 'bg-slate-800 text-white'      // Active state styling
+                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'  // Inactive state
                     }
                   `}
                 >
@@ -98,7 +105,7 @@ export default function Sidebar({ userRole, onLogout }: SidebarProps) {
             })}
           </nav>
 
-          {/* User info */}
+          {/* User info section at bottom of sidebar */}
           <div className="p-4 border-t border-white/10">
             <div>
               <p className="text-sm font-medium capitalize text-white">{userRole}</p>

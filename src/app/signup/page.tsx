@@ -19,6 +19,8 @@ export default function SignupPage() {
     setLoading(true)
 
     try {
+      console.log('Starting signup process for:', email)
+
       // 1. Create auth user
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
@@ -31,14 +33,19 @@ export default function SignupPage() {
         }
       })
 
-      if (authError) throw authError
+      console.log('Auth response:', { authData, authError })
+
+      if (authError) {
+        console.error('Auth error:', authError)
+        throw authError
+      }
 
       // 2. If user created successfully, create database record
       if (authData.user) {
-        console.log('Auth user created:', authData.user.id)
+        console.log('Auth user created successfully:', authData.user.id)
 
         // Try to create user record
-        const { error: dbError } = await supabase
+        const { data: dbData, error: dbError } = await supabase
           .from('users')
           .insert({
             id: authData.user.id,
@@ -46,15 +53,25 @@ export default function SignupPage() {
             full_name: fullName,
             role: 'user'
           })
+          .select()
+
+        console.log('Database insert response:', { dbData, dbError })
 
         if (dbError) {
           console.error('Database error:', dbError)
           // Don't throw - auth user was created, user can still login
           // Admin can manually add the role later if needed
+          setError(`User created but role assignment failed: ${dbError.message}. You can still login, contact admin for role assignment.`)
+        } else {
+          console.log('Database record created successfully')
         }
+      } else {
+        console.log('No user data returned from auth')
+        setError('Signup completed but user data not returned. Please try logging in.')
       }
 
       // 3. Redirect to login
+      console.log('Redirecting to login...')
       window.location.href = '/login?signup=success'
     } catch (err: any) {
       console.error('Signup error:', err)
