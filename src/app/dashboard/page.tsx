@@ -2,10 +2,10 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
-import { 
-  Users, 
-  UserCheck, 
-  UserX, 
+import {
+  Users,
+  UserCheck,
+  UserX,
   Clock,
   TrendingUp,
   Calendar
@@ -13,9 +13,11 @@ import {
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { DashboardStats } from '@/types/database'
+import { useRouter } from 'next/navigation'
 
 export default function DashboardPage() {
   const { userRole, logout } = useAuth()
+  const router = useRouter()
   const [stats, setStats] = useState<DashboardStats>({
     total_employees: 0,
     expected_today: 0,
@@ -73,119 +75,117 @@ export default function DashboardPage() {
       title: 'Total Employees',
       value: stats.total_employees,
       icon: Users,
-      color: 'bg-blue-500',
-      change: '+2 this month'
+      color: 'from-blue-500 to-blue-600',
+      bgColor: 'bg-blue-500/10',
+      borderColor: 'border-blue-500/20'
     },
     {
       title: 'Expected Today',
       value: stats.expected_today,
       icon: Calendar,
-      color: 'bg-purple-500',
-      change: 'Active employees'
+      color: 'from-purple-500 to-purple-600',
+      bgColor: 'bg-purple-500/10',
+      borderColor: 'border-purple-500/20'
     },
     {
       title: 'Present Today',
       value: stats.present_today,
       icon: UserCheck,
-      color: 'bg-green-500',
-      change: `${stats.attendance_rate}% attendance rate`
+      color: 'from-green-500 to-green-600',
+      bgColor: 'bg-green-500/10',
+      borderColor: 'border-green-500/20'
     },
     {
       title: 'Absent Today',
       value: stats.absent_today,
       icon: UserX,
-      color: 'bg-red-500',
-      change: `Unmarked: ${stats.expected_today - stats.present_today - stats.absent_today - stats.late_today}`
+      color: 'from-red-500 to-red-600',
+      bgColor: 'bg-red-500/10',
+      borderColor: 'border-red-500/20'
     },
     {
       title: 'Late Today',
       value: stats.late_today,
       icon: Clock,
-      color: 'bg-yellow-500',
-      change: 'Needs attention'
+      color: 'from-yellow-500 to-yellow-600',
+      bgColor: 'bg-yellow-500/10',
+      borderColor: 'border-yellow-500/20'
     },
     {
       title: 'Attendance Rate',
       value: `${stats.attendance_rate}%`,
       icon: TrendingUp,
-      color: 'bg-teal-500',
-      change: 'Last 30 days'
+      color: 'from-teal-500 to-teal-600',
+      bgColor: 'bg-teal-500/10',
+      borderColor: 'border-teal-500/20'
     }
   ]
 
   if (loading) {
     return (
-      <AppLayout 
-        title="Dashboard" 
+      <AppLayout
+        title="Dashboard"
         subtitle="Overview of attendance metrics"
         userRole={userRole!}
         onLogout={logout}
       >
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
         </div>
       </AppLayout>
     )
   }
 
   return (
-    <AppLayout 
-      title="Dashboard" 
+    <AppLayout
+      title="Dashboard"
       subtitle="Overview of attendance metrics"
       userRole={userRole!}
       onLogout={logout}
     >
-      {/* Stats Grid */}
+      {/* Stats Grid - positioned at top */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {statCards.map((stat) => (
-          <div key={stat.title} className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+          <div
+            key={stat.title}
+            className={`bg-white/5 backdrop-blur-xl rounded-2xl p-6 border ${stat.borderColor} hover:bg-white/10 transition-all duration-300`}
+          >
             <div className="flex items-center justify-between mb-4">
-              <div className={`p-3 rounded-lg ${stat.color}`}>
+              <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} shadow-lg`}>
                 <stat.icon className="w-6 h-6 text-white" />
               </div>
-              <span className="text-sm text-gray-500">{stat.change}</span>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
-            <p className="text-sm text-gray-600 mt-1">{stat.title}</p>
+            <h3 className="text-3xl font-bold text-white">{stat.value}</h3>
+            <p className="text-sm text-gray-400 mt-1">{stat.title}</p>
           </div>
         ))}
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+      <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 mb-8">
+        <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <button className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-            <Users className="w-5 h-5 text-blue-600" />
-            <span className="font-medium">Add Employee</span>
+          <button
+            onClick={() => router.push('/people')}
+            className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/50 transition-all duration-300 group"
+          >
+            <Users className="w-5 h-5 text-purple-400 group-hover:text-purple-300" />
+            <span className="font-medium text-white">Add Employee</span>
           </button>
-          <button className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-            <Calendar className="w-5 h-5 text-purple-600" />
-            <span className="font-medium">Mark Attendance</span>
+          <button
+            onClick={() => router.push('/attendance')}
+            className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/50 transition-all duration-300 group"
+          >
+            <Calendar className="w-5 h-5 text-purple-400 group-hover:text-purple-300" />
+            <span className="font-medium text-white">Mark Attendance</span>
           </button>
-          <button className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-            <TrendingUp className="w-5 h-5 text-teal-600" />
-            <span className="font-medium">View Reports</span>
+          <button
+            onClick={() => router.push('/reports')}
+            className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/50 transition-all duration-300 group"
+          >
+            <TrendingUp className="w-5 h-5 text-purple-400 group-hover:text-purple-300" />
+            <span className="font-medium text-white">View Reports</span>
           </button>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex items-center gap-4 p-4 rounded-lg bg-gray-50">
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <UserCheck className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-gray-900">Attendance marked for {i === 1 ? 'John Doe' : i === 2 ? 'Jane Smith' : 'Mike Johnson'}</p>
-                <p className="text-sm text-gray-500">Marked as present at {i === 1 ? '9:00 AM' : i === 2 ? '9:15 AM' : '8:45 AM'}</p>
-              </div>
-              <span className="text-sm text-gray-400">{i}h ago</span>
-            </div>
-          ))}
         </div>
       </div>
     </AppLayout>

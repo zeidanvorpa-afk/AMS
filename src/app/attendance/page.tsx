@@ -98,11 +98,11 @@ export default function AttendancePage() {
     }
   }
 
-  const statusOptions: { value: AttendanceStatus; label: string; icon: any; color: string }[] = [
-    { value: 'present', label: 'Present', icon: Check, color: 'bg-green-500' },
-    { value: 'absent', label: 'Absent', icon: X, color: 'bg-red-500' },
-    { value: 'late', label: 'Late', icon: Clock, color: 'bg-yellow-500' },
-    { value: 'excused', label: 'Excused', icon: FileText, color: 'bg-blue-500' }
+  const statusOptions: { value: AttendanceStatus; label: string; icon: any; color: string; gradient: string }[] = [
+    { value: 'present', label: 'Present', icon: Check, color: 'bg-green-500', gradient: 'from-green-500 to-green-600' },
+    { value: 'absent', label: 'Absent', icon: X, color: 'bg-red-500', gradient: 'from-red-500 to-red-600' },
+    { value: 'late', label: 'Late', icon: Clock, color: 'bg-yellow-500', gradient: 'from-yellow-500 to-yellow-600' },
+    { value: 'excused', label: 'Excused', icon: FileText, color: 'bg-blue-500', gradient: 'from-blue-500 to-blue-600' }
   ]
 
   const getStatusSummary = () => {
@@ -122,14 +122,14 @@ export default function AttendancePage() {
 
   if (loading) {
     return (
-      <AppLayout 
-        title="Attendance" 
+      <AppLayout
+        title="Attendance"
         subtitle="Mark daily attendance"
         userRole={userRole!}
         onLogout={logout}
       >
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
         </div>
       </AppLayout>
     )
@@ -143,21 +143,21 @@ export default function AttendancePage() {
       onLogout={logout}
     >
       {/* Date Selection */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mb-6">
+      <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10 mb-6">
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div className="flex items-center gap-3">
-            <Calendar className="w-5 h-5 text-gray-600" />
+            <Calendar className="w-5 h-5 text-gray-400" />
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
             />
           </div>
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             {saving ? 'Saving...' : 'Save Attendance'}
@@ -168,59 +168,59 @@ export default function AttendancePage() {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
         {statusOptions.map((option) => (
-          <div key={option.value} className="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
-            <div className={`w-8 h-8 rounded-lg ${option.color} flex items-center justify-center mb-2`}>
+          <div key={option.value} className="bg-white/5 backdrop-blur-xl rounded-2xl p-4 border border-white/10 hover:bg-white/10 transition-all">
+            <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${option.gradient} flex items-center justify-center mb-2 shadow-lg`}>
               <option.icon className="w-4 h-4 text-white" />
             </div>
-            <p className="text-2xl font-bold text-gray-900">{summary[option.value]}</p>
-            <p className="text-sm text-gray-600">{option.label}</p>
+            <p className="text-2xl font-bold text-white">{summary[option.value]}</p>
+            <p className="text-sm text-gray-400">{option.label}</p>
           </div>
         ))}
-        <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-200">
-          <div className="w-8 h-8 rounded-lg bg-gray-400 flex items-center justify-center mb-2">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-4 border border-white/10 hover:bg-white/10 transition-all">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center mb-2 shadow-lg">
             <FileText className="w-4 h-4 text-white" />
           </div>
-          <p className="text-2xl font-bold text-gray-900">{summary.unmarked}</p>
-          <p className="text-sm text-gray-600">Unmarked</p>
+          <p className="text-2xl font-bold text-white">{summary.unmarked}</p>
+          <p className="text-sm text-gray-400">Unmarked</p>
         </div>
       </div>
 
       {/* Attendance List */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-white/5 border-b border-white/10">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Employee
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Department
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Status
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/10">
               {employees.length === 0 ? (
                 <tr>
-                  <td colSpan={3} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={3} className="px-6 py-12 text-center text-gray-400">
                     No employees found
                   </td>
                 </tr>
               ) : (
                 employees.map((employee) => (
-                  <tr key={employee.id} className="hover:bg-gray-50">
+                  <tr key={employee.id} className="hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-medium text-gray-900">
+                        <div className="font-medium text-white">
                           {employee.first_name} {employee.last_name}
                         </div>
-                        <div className="text-sm text-gray-500">{employee.employee_id}</div>
+                        <div className="text-sm text-gray-400">{employee.employee_id}</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-600">
+                    <td className="px-6 py-4 text-gray-300">
                       {employee.department}
                     </td>
                     <td className="px-6 py-4">
@@ -233,9 +233,9 @@ export default function AttendancePage() {
                               onClick={() => handleStatusChange(employee.id, option.value)}
                               className={`
                                 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
-                                ${isSelected 
-                                  ? `${option.color} text-white` 
-                                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                ${isSelected
+                                  ? `bg-gradient-to-r ${option.gradient} text-white shadow-lg`
+                                  : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10'
                                 }
                               `}
                             >

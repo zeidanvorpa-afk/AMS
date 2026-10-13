@@ -52,16 +52,27 @@ export default function Sidebar({ userRole, onLogout }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full w-64 bg-slate-900 text-white
-          transform transition-transform duration-300 ease-in-out z-50
+          fixed top-0 left-0 h-full w-64 bg-slate-900/80 backdrop-blur-xl text-white
+          transform transition-transform duration-300 ease-in-out z-50 border-r border-white/10
           ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
         `}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="p-6 border-b border-slate-700">
-            <h1 className="text-2xl font-bold tracking-tight">AMS</h1>
-            <p className="text-sm text-slate-400 mt-1">Attendance Management</p>
+          <div className="p-6 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-lg">
+                  <span className="text-white text-lg font-bold tracking-tight">AMS</span>
+                </div>
+                <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-blue-400 rounded-full shadow-lg" />
+                <div className="absolute -bottom-0.5 -left-0.5 w-2 h-2 bg-pink-400 rounded-full shadow-lg" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold tracking-tight text-white">AMS</h1>
+                <p className="text-xs text-slate-400">Attendance Management System</p>
+              </div>
+            </div>
           </div>
 
           {/* Navigation */}
