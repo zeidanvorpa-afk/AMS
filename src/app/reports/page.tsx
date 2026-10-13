@@ -9,12 +9,16 @@ import { Download, Calendar, Filter, TrendingUp, TrendingDown } from 'lucide-rea
 export default function ReportsPage() {
   // Reports page for attendance analytics
   const { userRole, logout } = useAuth()
-  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7))
+  const [selectedMonth, setSelectedMonth] = useState('')
   const [reportData, setReportData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchReportData()
+    if (!selectedMonth) {
+      setSelectedMonth(new Date().toISOString().slice(0, 7))
+    } else {
+      fetchReportData()
+    }
   }, [selectedMonth])
 
   const fetchReportData = async () => {

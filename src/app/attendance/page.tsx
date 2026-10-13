@@ -10,14 +10,18 @@ import { Calendar, Check, X, Clock, FileText, Save } from 'lucide-react'
 export default function AttendancePage() {
   const { userRole, logout } = useAuth()
   const [employees, setEmployees] = useState<Employee[]>([])
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
+  const [selectedDate, setSelectedDate] = useState('')
   const [attendanceData, setAttendanceData] = useState<Record<string, AttendanceStatus>>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    fetchEmployees()
-    fetchAttendance()
+    if (!selectedDate) {
+      setSelectedDate(new Date().toISOString().split('T')[0])
+    } else {
+      fetchEmployees()
+      fetchAttendance()
+    }
   }, [selectedDate])
 
   const fetchEmployees = async () => {
