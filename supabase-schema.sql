@@ -80,6 +80,7 @@ ALTER TABLE attendance ENABLE ROW LEVEL SECURITY;
 
 -- Users RLS policies
 CREATE POLICY "Users can view all users" ON users FOR SELECT USING (true);
+CREATE POLICY "Users can insert their own account" ON users FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "Admins can insert users" ON users FOR INSERT WITH CHECK (auth.role() = 'admin');
 CREATE POLICY "Admins can update users" ON users FOR UPDATE USING (auth.role() = 'admin');
 CREATE POLICY "Admins can delete users" ON users FOR DELETE USING (auth.role() = 'admin');

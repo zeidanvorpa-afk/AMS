@@ -93,9 +93,11 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center text-sm text-gray-500">
-            <p>Demo credentials:</p>
-            <p className="font-mono mt-1">admin@ams.com</p>
-            <p className="text-xs text-gray-400">(Set up your Supabase auth first)</p>
+            <p>Don't have an account?{' '}
+              <a href="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
+                Sign up
+              </a>
+            </p>
           </div>
         </div>
       </div>
