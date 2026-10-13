@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase'
 import { Download, Calendar, Filter, TrendingUp, TrendingDown } from 'lucide-react'
 
 export default function ReportsPage() {
+  // Reports page for attendance analytics
   const { userRole, logout } = useAuth()
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7))
   const [reportData, setReportData] = useState<any[]>([])
