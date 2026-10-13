@@ -22,10 +22,13 @@ export default function LoginPage() {
     setIsSubmitting(true)
 
     try {
-      console.log('Attempting login with:', email)
+      console.log('=== LOGIN ATTEMPT ===')
+      console.log('Email:', email)
+      console.log('Password length:', password.length)
       await login(email, password)
-      console.log('Login successful, redirecting to dashboard')
+      console.log('Login successful, calling router.push(/dashboard)')
       router.push('/dashboard')
+      console.log('Router push called')
     } catch (err: any) {
       console.error('Login error:', err)
       if (err.message?.includes('Invalid login credentials')) {
@@ -72,7 +75,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black font-semibold"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                 autoComplete="email"
               />
             </div>
@@ -89,7 +92,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black font-semibold"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                   autoComplete="current-password"
                 />
                 <button

@@ -27,6 +27,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    console.log('Dashboard: useEffect called, userRole:', userRole)
     fetchDashboardStats()
   }, [])
 

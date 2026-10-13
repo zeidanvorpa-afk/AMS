@@ -58,10 +58,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const login = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    console.log('AuthContext: Calling signInWithPassword')
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
+    console.log('AuthContext: signInWithPassword result:', { error: error?.message, user: data?.user?.id })
     if (error) throw error
   }
 
