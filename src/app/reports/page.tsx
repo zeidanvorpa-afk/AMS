@@ -65,7 +65,7 @@ export default function ReportsPage() {
           }
           return acc
         }, {} as Record<string, any>)
-      ).map(([_, emp]) => {
+      ).map(([_, emp]: [string, any]) => {
         const stats = calculateEmployeeStats(emp.id)
         return [
           emp.employee_id,
@@ -112,7 +112,7 @@ export default function ReportsPage() {
       }
       return acc
     }, {} as Record<string, any>)
-  )
+  ) as any[]
 
   return (
     <AppLayout 
@@ -153,7 +153,7 @@ export default function ReportsPage() {
           <p className="text-2xl font-bold text-gray-900">
             {uniqueEmployees.length > 0 
               ? Math.round(
-                  uniqueEmployees.reduce((sum, emp) => sum + calculateEmployeeStats(emp.id).attendanceRate, 0) / 
+                  uniqueEmployees.reduce((sum: number, emp: any) => sum + calculateEmployeeStats(emp.id).attendanceRate, 0) / 
                   uniqueEmployees.length
                 ) 
               : 0}%
@@ -165,7 +165,7 @@ export default function ReportsPage() {
             <span className="text-xs text-gray-500">Total Absences</span>
           </div>
           <p className="text-2xl font-bold text-gray-900">
-            {uniqueEmployees.reduce((sum, emp) => sum + calculateEmployeeStats(emp.id).absent, 0)}
+            {uniqueEmployees.reduce((sum: number, emp: any) => sum + calculateEmployeeStats(emp.id).absent, 0)}
           </p>
         </div>
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
