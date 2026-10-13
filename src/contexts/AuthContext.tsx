@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createBrowserClient } from '@supabase/ssr'
 import { UserRole } from '@/types/database'
 
 interface AuthContextType {
@@ -15,6 +15,12 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const [supabase] = useState(() =>
+    createBrowserClient(
+      'https://vdoqwihhpdconsijmjxh.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkb3F3aWhocGRjb25zaWptanhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4NTkyMjgsImV4cCI6MjEwNzQzNTIyOH0.ih4TURRsbR2NWi6rkrAsCRIEQFOUsIWfiCUrt4B4iQM'
+    )
+  )
   const [user, setUser] = useState<any>(null)
   const [userRole, setUserRole] = useState<UserRole | null>(null)
   const [loading, setLoading] = useState(true)
@@ -33,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('Auth state change:', _event, session?.user?.id)
       setUser(session?.user ?? null)
       if (session?.user) {
         fetchUserRole(session.user.id)
@@ -43,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
 
     return () => subscription.unsubscribe()
-  }, [])
+  }, [supabase])
 
   const fetchUserRole = async (userId: string) => {
     const { data, error } = await supabase
@@ -58,12 +65,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const login = async (email: string, password: string) => {
-    console.log('AuthContext: Calling signInWithPassword')
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
-    console.log('AuthContext: signInWithPassword result:', { error: error?.message, user: data?.user?.id })
     if (error) throw error
   }
 
