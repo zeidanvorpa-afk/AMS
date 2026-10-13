@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
 import { Employee, AttendanceStatus } from '@/types/database'
-import { Calendar, Check, X, Clock, FileText, Save } from 'lucide-react'
+import { Calendar, Check, X, Clock, FileText, Save, CheckCircle2 } from 'lucide-react'
 
 export default function AttendancePage() {
   const { user, userRole, logout } = useAuth()
@@ -17,6 +17,7 @@ export default function AttendancePage() {
   const [attendanceData, setAttendanceData] = useState<Record<string, AttendanceStatus>>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [showNotification, setShowNotification] = useState(false)
 
   // Fetch employees and attendance when date changes
   useEffect(() => {
@@ -100,7 +101,9 @@ export default function AttendancePage() {
         throw new Error(errorData.error || 'Failed to save attendance')
       }
 
-      alert('Attendance saved successfully!')
+      // Show success notification
+      setShowNotification(true)
+      setTimeout(() => setShowNotification(false), 3000)
     } catch (error) {
       console.error('Error saving attendance:', error)
       alert('Failed to save attendance')
@@ -263,6 +266,17 @@ export default function AttendancePage() {
           </table>
         </div>
       </div>
+
+      {/* Success Notification Popup */}
+      {showNotification && (
+        <div className="fixed bottom-6 right-6 bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 animate-bounce-in z-50">
+          <CheckCircle2 className="w-6 h-6" />
+          <div>
+            <p className="font-semibold">Attendance Saved!</p>
+            <p className="text-sm opacity-90">Records updated successfully</p>
+          </div>
+        </div>
+      )}
     </AppLayout>
   )
 }

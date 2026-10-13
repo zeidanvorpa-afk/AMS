@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     const month = searchParams.get('month')  // Format: YYYY-MM
     const year = searchParams.get('year')      // Format: YYYY
 
-    // Build Supabase query using admin client to bypass RLS
+    // Build Supabase query using admin client to bypass RLS (consistent with attendance API)
     let query = supabaseAdmin
       .from('attendance')
       .select(`
@@ -36,14 +36,18 @@ export async function GET(request: NextRequest) {
         )
       `)
 
-    // Add month filter if provided
+    // Add month filter if provided (use date range for better performance)
     if (month) {
-      query = query.like('date', `${month}%`)
+      const startDate = `${month}-01`
+      const endDate = `${month}-31`
+      query = query.gte('date', startDate).lte('date', endDate)
     }
 
-    // Add year filter if provided
+    // Add year filter if provided (use date range)
     if (year) {
-      query = query.like('date', `${year}%`)
+      const startDate = `${year}-01-01`
+      const endDate = `${year}-12-31`
+      query = query.gte('date', startDate).lte('date', endDate)
     }
 
     // Order by date (newest first)
@@ -53,6 +57,7 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query
 
     if (error) {
+      console.error('[Reports API] Supabase error:', error)
       return NextResponse.json(
         { error: 'Failed to fetch report data', details: error.message },
         { status: 500 }
