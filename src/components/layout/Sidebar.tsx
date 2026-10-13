@@ -2,12 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { 
-  LayoutDashboard, 
-  Users, 
-  ClipboardCheck, 
+import {
+  LayoutDashboard,
+  Users,
+  ClipboardCheck,
   BarChart3,
-  LogOut,
   Menu,
   X
 } from 'lucide-react'
@@ -99,19 +98,12 @@ export default function Sidebar({ userRole, onLogout }: SidebarProps) {
             })}
           </nav>
 
-          {/* User info & logout */}
-          <div className="p-4 border-t border-slate-700">
-            <div className="mb-4">
-              <p className="text-sm font-medium capitalize">{userRole}</p>
-              <p className="text-xs text-slate-400">Logged in</p>
+          {/* User info */}
+          <div className="p-4 border-t border-white/10">
+            <div>
+              <p className="text-sm font-medium capitalize text-white">{userRole}</p>
+              <p className="text-xs text-gray-400">Logged in</p>
             </div>
-            <button
-              onClick={onLogout}
-              className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-              <span>Logout</span>
-            </button>
           </div>
         </div>
       </aside>

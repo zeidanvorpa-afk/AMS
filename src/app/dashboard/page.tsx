@@ -8,7 +8,11 @@ import {
   UserX,
   Clock,
   TrendingUp,
-  Calendar
+  TrendingDown,
+  Calendar,
+  Plus,
+  ClipboardCheck,
+  BarChart3
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -77,7 +81,9 @@ export default function DashboardPage() {
       icon: Users,
       color: 'from-blue-500 to-blue-600',
       bgColor: 'bg-blue-500/10',
-      borderColor: 'border-blue-500/20'
+      borderColor: 'border-blue-500/20',
+      trend: '+2',
+      trendUp: true
     },
     {
       title: 'Expected Today',
@@ -85,7 +91,9 @@ export default function DashboardPage() {
       icon: Calendar,
       color: 'from-purple-500 to-purple-600',
       bgColor: 'bg-purple-500/10',
-      borderColor: 'border-purple-500/20'
+      borderColor: 'border-purple-500/20',
+      trend: null,
+      trendUp: null
     },
     {
       title: 'Present Today',
@@ -93,7 +101,9 @@ export default function DashboardPage() {
       icon: UserCheck,
       color: 'from-green-500 to-green-600',
       bgColor: 'bg-green-500/10',
-      borderColor: 'border-green-500/20'
+      borderColor: 'border-green-500/20',
+      trend: '+5%',
+      trendUp: true
     },
     {
       title: 'Absent Today',
@@ -101,7 +111,9 @@ export default function DashboardPage() {
       icon: UserX,
       color: 'from-red-500 to-red-600',
       bgColor: 'bg-red-500/10',
-      borderColor: 'border-red-500/20'
+      borderColor: 'border-red-500/20',
+      trend: '-3%',
+      trendUp: false
     },
     {
       title: 'Late Today',
@@ -109,7 +121,9 @@ export default function DashboardPage() {
       icon: Clock,
       color: 'from-yellow-500 to-yellow-600',
       bgColor: 'bg-yellow-500/10',
-      borderColor: 'border-yellow-500/20'
+      borderColor: 'border-yellow-500/20',
+      trend: '-1',
+      trendUp: true
     },
     {
       title: 'Attendance Rate',
@@ -117,7 +131,9 @@ export default function DashboardPage() {
       icon: TrendingUp,
       color: 'from-teal-500 to-teal-600',
       bgColor: 'bg-teal-500/10',
-      borderColor: 'border-teal-500/20'
+      borderColor: 'border-teal-500/20',
+      trend: '+2%',
+      trendUp: true
     }
   ]
 
@@ -148,12 +164,24 @@ export default function DashboardPage() {
         {statCards.map((stat) => (
           <div
             key={stat.title}
-            className={`bg-white/5 backdrop-blur-xl rounded-2xl p-6 border ${stat.borderColor} hover:bg-white/10 transition-all duration-300`}
+            className={`bg-white/5 backdrop-blur-xl rounded-2xl p-6 border ${stat.borderColor} hover:bg-white/10 transition-all duration-300 group`}
           >
             <div className="flex items-center justify-between mb-4">
               <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} shadow-lg`}>
                 <stat.icon className="w-6 h-6 text-white" />
               </div>
+              {stat.trend && (
+                <div className={`flex items-center gap-1 text-sm font-medium ${
+                  stat.trendUp ? 'text-green-400' : 'text-red-400'
+                }`}>
+                  {stat.trendUp ? (
+                    <TrendingUp className="w-4 h-4" />
+                  ) : (
+                    <TrendingDown className="w-4 h-4" />
+                  )}
+                  <span>{stat.trend}</span>
+                </div>
+              )}
             </div>
             <h3 className="text-3xl font-bold text-white">{stat.value}</h3>
             <p className="text-sm text-gray-400 mt-1">{stat.title}</p>
@@ -167,24 +195,39 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <button
             onClick={() => router.push('/people')}
-            className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/50 transition-all duration-300 group"
+            className="flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30 hover:border-purple-500/50 transition-all duration-300 group"
           >
-            <Users className="w-5 h-5 text-purple-400 group-hover:text-purple-300" />
-            <span className="font-medium text-white">Add Employee</span>
+            <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg group-hover:shadow-xl transition-shadow">
+              <Plus className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-left">
+              <span className="font-medium text-white block">Add Employee</span>
+              <span className="text-xs text-gray-400">Manage staff</span>
+            </div>
           </button>
           <button
             onClick={() => router.push('/attendance')}
-            className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/50 transition-all duration-300 group"
+            className="flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30 hover:border-purple-500/50 transition-all duration-300 group"
           >
-            <Calendar className="w-5 h-5 text-purple-400 group-hover:text-purple-300" />
-            <span className="font-medium text-white">Mark Attendance</span>
+            <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg group-hover:shadow-xl transition-shadow">
+              <ClipboardCheck className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-left">
+              <span className="font-medium text-white block">Mark Attendance</span>
+              <span className="text-xs text-gray-400">Daily tracking</span>
+            </div>
           </button>
           <button
             onClick={() => router.push('/reports')}
-            className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 hover:border-purple-500/50 transition-all duration-300 group"
+            className="flex items-center gap-4 p-5 rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30 hover:border-purple-500/50 transition-all duration-300 group"
           >
-            <TrendingUp className="w-5 h-5 text-purple-400 group-hover:text-purple-300" />
-            <span className="font-medium text-white">View Reports</span>
+            <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg group-hover:shadow-xl transition-shadow">
+              <BarChart3 className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-left">
+              <span className="font-medium text-white block">View Reports</span>
+              <span className="text-xs text-gray-400">Analytics</span>
+            </div>
           </button>
         </div>
       </div>
