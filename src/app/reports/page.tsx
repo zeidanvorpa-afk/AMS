@@ -59,7 +59,7 @@ export default function ReportsPage() {
     const csv = [
       ['Employee ID', 'Name', 'Department', 'Total Days', 'Present', 'Absent', 'Late', 'Excused', 'Attendance Rate'],
       ...Object.entries(
-        reportData.reduce((acc, record) => {
+        reportData.reduce((acc: Record<string, any>, record: any) => {
           const empId = record.employees?.id
           if (empId && !acc[empId]) {
             acc[empId] = record.employees
@@ -105,15 +105,15 @@ export default function ReportsPage() {
     )
   }
 
-  const uniqueEmployees = Object.values(
-    reportData.reduce((acc, record) => {
+  const uniqueEmployees: any[] = Object.values(
+    reportData.reduce((acc: Record<string, any>, record: any) => {
       const empId = record.employees?.id
       if (empId && !acc[empId]) {
         acc[empId] = record.employees
       }
       return acc
     }, {} as Record<string, any>)
-  ) as any[]
+  )
 
   return (
     <AppLayout 
