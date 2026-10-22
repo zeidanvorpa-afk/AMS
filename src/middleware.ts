@@ -10,13 +10,13 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkb3F3aWhocGRjb25zaWptanhoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4NTkyMjgsImV4cCI6MjEwNzQzNTIyOH0.ih4TURRsbR2NWi6rkrAsCRIEQFOUsIWfiCUrt4B4iQM',
     {
       cookies: {
-        async get(name: string) {
-          return (await req.cookies.get(name))?.value
+        get(name: string) {
+          return req.cookies.get(name)?.value
         },
-        async set(name: string, value: string, options: any) {
+        set(name: string, value: string, options: any) {
           res.cookies.set({ name, value, ...options })
         },
-        async remove(name: string, options: any) {
+        remove(name: string, options: any) {
           res.cookies.delete({ name, ...options })
         },
       },
