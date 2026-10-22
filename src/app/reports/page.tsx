@@ -106,7 +106,7 @@ export default function ReportsPage() {
         onLogout={logout}
       >
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
         </div>
       </AppLayout>
     )
@@ -130,20 +130,20 @@ export default function ReportsPage() {
       onLogout={logout}
     >
       {/* Filters */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mb-6">
+      <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 mb-6">
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div className="flex items-center gap-3">
-            <Calendar className="w-5 h-5 text-gray-600" />
+            <Calendar className="w-5 h-5 text-purple-400" />
             <input
               type="month"
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
             />
           </div>
           <button
             onClick={exportReport}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl"
           >
             <Download className="w-4 h-4" />
             Export CSV
@@ -153,12 +153,12 @@ export default function ReportsPage() {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
           <div className="flex items-center justify-between mb-2">
-            <TrendingUp className="w-5 h-5 text-green-600" />
-            <span className="text-xs text-gray-500">Avg Attendance</span>
+            <TrendingUp className="w-5 h-5 text-green-400" />
+            <span className="text-xs text-gray-400">Avg Attendance</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-2xl font-bold text-white">
             {uniqueEmployees.length > 0
               ? Math.round(
                   uniqueEmployees.reduce((sum: number, emp: any) => sum + calculateEmployeeStats(emp.id).attendanceRate, 0) /
@@ -167,69 +167,69 @@ export default function ReportsPage() {
               : 0}%
           </p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
           <div className="flex items-center justify-between mb-2">
-            <TrendingDown className="w-5 h-5 text-red-600" />
-            <span className="text-xs text-gray-500">Total Absences</span>
+            <TrendingDown className="w-5 h-5 text-red-400" />
+            <span className="text-xs text-gray-400">Total Absences</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-2xl font-bold text-white">
             {uniqueEmployees.reduce((sum: number, emp: any) => sum + calculateEmployeeStats(emp.id).absent, 0)}
           </p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
           <div className="flex items-center justify-between mb-2">
-            <Calendar className="w-5 h-5 text-blue-600" />
-            <span className="text-xs text-gray-500">Days Tracked</span>
+            <Calendar className="w-5 h-5 text-blue-400" />
+            <span className="text-xs text-gray-400">Days Tracked</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-2xl font-bold text-white">
             {new Set(reportData.map(r => r.date)).size}
           </p>
         </div>
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
           <div className="flex items-center justify-between mb-2">
-            <Filter className="w-5 h-5 text-purple-600" />
-            <span className="text-xs text-gray-500">Employees</span>
+            <Filter className="w-5 h-5 text-purple-400" />
+            <span className="text-xs text-gray-400">Employees</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900">{uniqueEmployees.length}</p>
+          <p className="text-2xl font-bold text-white">{uniqueEmployees.length}</p>
         </div>
       </div>
 
       {/* Employee Attendance Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-white/5 border-b border-white/10">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Employee
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Department
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Total Days
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Present
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Absent
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Late
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Excused
                 </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
                   Rate
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-white/5">
               {uniqueEmployees.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={8} className="px-6 py-12 text-center text-gray-400">
                     No attendance data for this period
                   </td>
                 </tr>
@@ -237,48 +237,48 @@ export default function ReportsPage() {
                 uniqueEmployees.map((employee: any) => {
                   const stats = calculateEmployeeStats(employee.id)
                   return (
-                    <tr key={employee.id} className="hover:bg-gray-50">
+                    <tr key={employee.id} className="hover:bg-white/5 transition-colors">
                       <td className="px-6 py-4">
                         <div>
-                          <div className="font-medium text-gray-900">
+                          <div className="font-medium text-white">
                             {employee.first_name} {employee.last_name}
                           </div>
-                          <div className="text-sm text-gray-500">{employee.employee_id}</div>
+                          <div className="text-sm text-gray-400">{employee.employee_id}</div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-gray-600">
+                      <td className="px-6 py-4 text-gray-400">
                         {employee.department}
                       </td>
-                      <td className="px-6 py-4 text-center text-gray-900 font-medium">
+                      <td className="px-6 py-4 text-center text-white font-medium">
                         {stats.totalDays}
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
                           {stats.present}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">
+                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-red-500/20 text-red-400 border border-red-500/30">
                           {stats.absent}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
+                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
                           {stats.late}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                        <span className="inline-flex px-2 py-1 text-xs font-medium rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
                           {stats.excused}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${
                           stats.attendanceRate >= 90 
-                            ? 'bg-green-100 text-green-800' 
+                            ? 'bg-green-500/20 text-green-400 border-green-500/30' 
                             : stats.attendanceRate >= 70 
-                            ? 'bg-yellow-100 text-yellow-800' 
-                            : 'bg-red-100 text-red-800'
+                            ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' 
+                            : 'bg-red-500/20 text-red-400 border-red-500/30'
                         }`}>
                           {stats.attendanceRate}%
                         </span>
@@ -294,4 +294,3 @@ export default function ReportsPage() {
     </AppLayout>
   )
 }
-

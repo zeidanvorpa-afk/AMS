@@ -8,14 +8,19 @@ import {
   UserX, 
   Clock,
   TrendingUp,
-  Calendar
+  TrendingDown,
+  Calendar,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { DashboardStats } from '@/types/database'
+import { useRouter } from 'next/navigation'
 
 export default function DashboardPage() {
   const { userRole, logout } = useAuth()
+  const router = useRouter()
   const [stats, setStats] = useState<DashboardStats>({
     total_employees: 0,
     expected_today: 0,
@@ -72,43 +77,55 @@ export default function DashboardPage() {
       title: 'Total Employees',
       value: stats.total_employees,
       icon: Users,
-      color: 'bg-blue-500',
-      change: '+2 this month'
+      gradient: 'from-blue-500 to-cyan-500',
+      trend: '+2',
+      trendUp: true,
+      label: 'this month'
     },
     {
       title: 'Expected Today',
       value: stats.expected_today,
       icon: Calendar,
-      color: 'bg-purple-500',
-      change: 'Active employees'
+      gradient: 'from-purple-500 to-pink-500',
+      trend: '+5',
+      trendUp: true,
+      label: 'from yesterday'
     },
     {
       title: 'Present Today',
       value: stats.present_today,
       icon: UserCheck,
-      color: 'bg-green-500',
-      change: `${stats.attendance_rate}% attendance rate`
+      gradient: 'from-green-500 to-emerald-500',
+      trend: '+12%',
+      trendUp: true,
+      label: 'vs last week'
     },
     {
       title: 'Absent Today',
       value: stats.absent_today,
       icon: UserX,
-      color: 'bg-red-500',
-      change: `Unmarked: ${stats.expected_today - stats.present_today - stats.absent_today - stats.late_today}`
+      gradient: 'from-red-500 to-rose-500',
+      trend: '-3',
+      trendUp: true,
+      label: 'from yesterday'
     },
     {
       title: 'Late Today',
       value: stats.late_today,
       icon: Clock,
-      color: 'bg-yellow-500',
-      change: 'Needs attention'
+      gradient: 'from-yellow-500 to-orange-500',
+      trend: '+2',
+      trendUp: false,
+      label: 'needs attention'
     },
     {
       title: 'Attendance Rate',
       value: `${stats.attendance_rate}%`,
       icon: TrendingUp,
-      color: 'bg-teal-500',
-      change: 'Last 30 days'
+      gradient: 'from-teal-500 to-cyan-500',
+      trend: '+5%',
+      trendUp: true,
+      label: 'last 30 days'
     }
   ]
 
@@ -121,7 +138,7 @@ export default function DashboardPage() {
         onLogout={logout}
       >
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
         </div>
       </AppLayout>
     )
@@ -137,54 +154,63 @@ export default function DashboardPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {statCards.map((stat) => (
-          <div key={stat.title} className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
+          <div key={stat.title} className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition-all group">
             <div className="flex items-center justify-between mb-4">
-              <div className={`p-3 rounded-lg ${stat.color}`}>
+              <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg group-hover:scale-110 transition-transform`}>
                 <stat.icon className="w-6 h-6 text-white" />
               </div>
-              <span className="text-sm text-gray-500">{stat.change}</span>
+              <div className={`flex items-center gap-1 text-sm ${stat.trendUp ? 'text-green-400' : 'text-red-400'}`}>
+                {stat.trendUp ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
+                <span>{stat.trend}</span>
+              </div>
             </div>
-            <h3 className="text-2xl font-bold text-gray-900">{stat.value}</h3>
-            <p className="text-sm text-gray-600 mt-1">{stat.title}</p>
+            <h3 className="text-3xl font-bold text-white">{stat.value}</h3>
+            <p className="text-sm text-gray-400 mt-1">{stat.title}</p>
+            <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
           </div>
         ))}
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200 mb-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+      <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 mb-8">
+        <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <button className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-            <Users className="w-5 h-5 text-blue-600" />
-            <span className="font-medium">Add Employee</span>
-          </button>
-          <button className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-            <Calendar className="w-5 h-5 text-purple-600" />
-            <span className="font-medium">Mark Attendance</span>
-          </button>
-          <button className="flex items-center gap-3 p-4 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
-            <TrendingUp className="w-5 h-5 text-teal-600" />
-            <span className="font-medium">View Reports</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex items-center gap-4 p-4 rounded-lg bg-gray-50">
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                <UserCheck className="w-5 h-5 text-blue-600" />
-              </div>
-              <div className="flex-1">
-                <p className="font-medium text-gray-900">Attendance marked for {i === 1 ? 'John Doe' : i === 2 ? 'Jane Smith' : 'Mike Johnson'}</p>
-                <p className="text-sm text-gray-500">Marked as present at {i === 1 ? '9:00 AM' : i === 2 ? '9:15 AM' : '8:45 AM'}</p>
-              </div>
-              <span className="text-sm text-gray-400">{i}h ago</span>
+          <button 
+            onClick={() => router.push('/people')}
+            className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30 transition-all group"
+          >
+            <div className="p-3 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
+              <Users className="w-5 h-5 text-white" />
             </div>
-          ))}
+            <div className="text-left">
+              <span className="font-medium text-white block">Add Employee</span>
+              <span className="text-xs text-gray-400">Manage staff</span>
+            </div>
+          </button>
+          <button 
+            onClick={() => router.push('/attendance')}
+            className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 hover:from-blue-500/30 hover:to-cyan-500/30 transition-all group"
+          >
+            <div className="p-3 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
+              <Calendar className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-left">
+              <span className="font-medium text-white block">Mark Attendance</span>
+              <span className="text-xs text-gray-400">Daily tracking</span>
+            </div>
+          </button>
+          <button 
+            onClick={() => router.push('/reports')}
+            className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-teal-500/20 to-emerald-500/20 border border-teal-500/30 hover:from-teal-500/30 hover:to-emerald-500/30 transition-all group"
+          >
+            <div className="p-3 rounded-lg bg-gradient-to-br from-teal-500 to-emerald-500">
+              <TrendingUp className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-left">
+              <span className="font-medium text-white block">View Reports</span>
+              <span className="text-xs text-gray-400">Analytics</span>
+            </div>
+          </button>
         </div>
       </div>
     </AppLayout>
