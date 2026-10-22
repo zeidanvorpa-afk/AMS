@@ -132,9 +132,6 @@ export default function LoginPage() {
       </div>
 
       <style jsx>{`
-        .animate-blob {
-          animation: blob 7s infinite;
-        }
         .animation-delay-2000 {
           animation-delay: 2s;
         }
