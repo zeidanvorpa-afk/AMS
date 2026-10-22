@@ -8,12 +8,20 @@ import { Download, Calendar, Filter, TrendingUp, TrendingDown } from 'lucide-rea
 
 export default function ReportsPage() {
   const { userRole, logout } = useAuth()
-  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7))
+  const [selectedMonth, setSelectedMonth] = useState('')
   const [reportData, setReportData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchReportData()
+    if (!selectedMonth) {
+      setSelectedMonth(new Date().toISOString().slice(0, 7))
+    }
+  }, [])
+
+  useEffect(() => {
+    if (selectedMonth) {
+      fetchReportData()
+    }
   }, [selectedMonth])
 
   const fetchReportData = async () => {
@@ -58,14 +66,14 @@ export default function ReportsPage() {
     const csv = [
       ['Employee ID', 'Name', 'Department', 'Total Days', 'Present', 'Absent', 'Late', 'Excused', 'Attendance Rate'],
       ...Object.entries(
-        reportData.reduce((acc, record) => {
+        reportData.reduce((acc: Record<string, any>, record: any) => {
           const empId = record.employees?.id
           if (empId && !acc[empId]) {
             acc[empId] = record.employees
           }
           return acc
         }, {} as Record<string, any>)
-      ).map(([_, emp]) => {
+      ).map(([_, emp]: [string, any]): any[] => {
         const stats = calculateEmployeeStats(emp.id)
         return [
           emp.employee_id,
@@ -105,14 +113,14 @@ export default function ReportsPage() {
   }
 
   const uniqueEmployees = Object.values(
-    reportData.reduce((acc, record) => {
+    reportData.reduce((acc: Record<string, any>, record: any) => {
       const empId = record.employees?.id
       if (empId && !acc[empId]) {
         acc[empId] = record.employees
       }
       return acc
     }, {} as Record<string, any>)
-  )
+  ) as any[]
 
   return (
     <AppLayout 
@@ -151,11 +159,11 @@ export default function ReportsPage() {
             <span className="text-xs text-gray-500">Avg Attendance</span>
           </div>
           <p className="text-2xl font-bold text-gray-900">
-            {uniqueEmployees.length > 0 
+            {uniqueEmployees.length > 0
               ? Math.round(
-                  uniqueEmployees.reduce((sum, emp) => sum + calculateEmployeeStats(emp.id).attendanceRate, 0) / 
+                  uniqueEmployees.reduce((sum: number, emp: any) => sum + calculateEmployeeStats(emp.id).attendanceRate, 0) /
                   uniqueEmployees.length
-                ) 
+                )
               : 0}%
           </p>
         </div>
@@ -165,7 +173,7 @@ export default function ReportsPage() {
             <span className="text-xs text-gray-500">Total Absences</span>
           </div>
           <p className="text-2xl font-bold text-gray-900">
-            {uniqueEmployees.reduce((sum, emp) => sum + calculateEmployeeStats(emp.id).absent, 0)}
+            {uniqueEmployees.reduce((sum: number, emp: any) => sum + calculateEmployeeStats(emp.id).absent, 0)}
           </p>
         </div>
         <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-200">
@@ -286,3 +294,4 @@ export default function ReportsPage() {
     </AppLayout>
   )
 }
+
