@@ -30,10 +30,3 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-.test-tailwind {
-  background: linear-gradient(to right, #a855f7, #ec4899);
-  color: white;
-  padding: 10px;
-  border-radius: 8px;
-}
