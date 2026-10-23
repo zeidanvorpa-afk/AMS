@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const { login, user } = useAuth()
+  const { login, user, loading: authLoading } = useAuth()
   const router = useRouter()
 
   // Redirect if already logged in
@@ -29,10 +29,9 @@ export default function LoginPage() {
 
     try {
       await login(email, password)
-      // Redirect after successful login
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 500)
+      // Wait for user state to update, then redirect
+      await new Promise(resolve => setTimeout(resolve, 500))
+      router.push('/dashboard')
     } catch (err: any) {
       setError(err.message || 'Login failed')
     } finally {
