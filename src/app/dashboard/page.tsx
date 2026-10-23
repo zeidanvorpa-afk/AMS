@@ -14,7 +14,7 @@ import {
   ArrowDown
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 import { DashboardStats } from '@/types/database'
 import { useRouter } from 'next/navigation'
 
@@ -37,6 +37,7 @@ export default function DashboardPage() {
 
   const fetchDashboardStats = async () => {
     try {
+      const supabase = createClient()
       const today = new Date().toISOString().split('T')[0]
 
       // Get total employees

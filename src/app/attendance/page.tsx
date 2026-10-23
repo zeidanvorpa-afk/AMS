@@ -3,7 +3,7 @@
 import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase/client'
 import { Employee, AttendanceStatus } from '@/types/database'
 import { Calendar, Check, X, Clock, FileText, Save } from 'lucide-react'
 
@@ -30,6 +30,7 @@ export default function AttendancePage() {
 
   const fetchEmployees = async () => {
     try {
+      const supabase = createClient()
       const { data, error } = await supabase
         .from('employees')
         .select('*')
@@ -47,6 +48,7 @@ export default function AttendancePage() {
 
   const fetchAttendance = async () => {
     try {
+      const supabase = createClient()
       const { data, error } = await supabase
         .from('attendance')
         .select('employee_id, status')
@@ -74,11 +76,12 @@ export default function AttendancePage() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      const user = (await supabase.auth.getUser()).data.user
+      const supabase = createClient()
+      const user = (await createClient().auth.getUser()).data.user
       if (!user) throw new Error('Not authenticated')
 
       for (const [employeeId, status] of Object.entries(attendanceData)) {
-        await supabase
+        await createClient()
           .from('attendance')
           .upsert({
             employee_id: employeeId,
