@@ -20,14 +20,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check active session
+    let isMounted = true
+
+    // Check active session on mount only
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        fetchUserRole(session.user.id)
+      if (isMounted) {
+        setUser(session?.user ?? null)
+        if (session?.user) {
+          fetchUserRole(session.user.id)
+        }
+        setLoading(false)
       }
-      setLoading(false)
     })
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const fetchUserRole = async (userId: string) => {
@@ -43,15 +51,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const login = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
     if (error) throw error
+    
+    // Manually update user state after successful login
+    setUser(data.user)
+    if (data.user) {
+      await fetchUserRole(data.user.id)
+    }
   }
 
   const logout = async () => {
     await supabase.auth.signOut()
+    setUser(null)
+    setUserRole(null)
   }
 
   return (

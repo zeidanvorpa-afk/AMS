@@ -6,14 +6,23 @@ import { useState, useEffect } from 'react'
 import supabase from '@/lib/supabase/client'
 import { Employee, AttendanceStatus } from '@/types/database'
 import { Calendar, Check, X, Clock, FileText, Save } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function AttendancePage() {
-  const { userRole, logout } = useAuth()
+  const { user, userRole, logout } = useAuth()
+  const router = useRouter()
   const [employees, setEmployees] = useState<Employee[]>([])
   const [selectedDate, setSelectedDate] = useState('')
   const [attendanceData, setAttendanceData] = useState<Record<string, AttendanceStatus>>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!user) {
+      router.push('/login')
+    }
+  }, [user, router])
 
   useEffect(() => {
     if (!selectedDate) {

@@ -19,8 +19,15 @@ import { DashboardStats } from '@/types/database'
 import { useRouter } from 'next/navigation'
 
 export default function DashboardPage() {
-  const { userRole, logout } = useAuth()
+  const { user, userRole, logout } = useAuth()
   const router = useRouter()
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!user) {
+      router.push('/login')
+    }
+  }, [user, router])
   const [stats, setStats] = useState<DashboardStats>({
     total_employees: 0,
     expected_today: 0,

@@ -5,12 +5,21 @@ import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
 import supabase from '@/lib/supabase/client'
 import { Download, Calendar, Filter, TrendingUp, TrendingDown } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function ReportsPage() {
-  const { userRole, logout } = useAuth()
+  const { user, userRole, logout } = useAuth()
+  const router = useRouter()
   const [selectedMonth, setSelectedMonth] = useState('')
   const [reportData, setReportData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!user) {
+      router.push('/login')
+    }
+  }, [user, router])
 
   useEffect(() => {
     if (!selectedMonth) {

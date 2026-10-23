@@ -6,9 +6,11 @@ import { useState, useEffect } from 'react'
 import supabase from '@/lib/supabase/client'
 import { Employee } from '@/types/database'
 import { Plus, Search, MoreVertical } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export default function PeoplePage() {
-  const { userRole, logout } = useAuth()
+  const { user, userRole, logout } = useAuth()
+  const router = useRouter()
   const [employees, setEmployees] = useState<Employee[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -21,6 +23,13 @@ export default function PeoplePage() {
     position: '',
     hire_date: ''
   })
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!user) {
+      router.push('/login')
+    }
+  }, [user, router])
 
   useEffect(() => {
     fetchEmployees()
