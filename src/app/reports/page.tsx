@@ -3,7 +3,7 @@
 import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import supabase from '@/lib/supabase/client'
 import { Download, Calendar, Filter, TrendingUp, TrendingDown } from 'lucide-react'
 
 export default function ReportsPage() {
@@ -26,7 +26,6 @@ export default function ReportsPage() {
 
   const fetchReportData = async () => {
     try {
-      const supabase = createClient()
       const { data, error } = await supabase
         .from('attendance')
         .select(`

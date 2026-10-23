@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import supabase from '@/lib/supabase/client'
 import { UserRole } from '@/types/database'
 
 interface AuthContextType {
@@ -20,8 +20,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const supabase = createClient()
-
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
@@ -33,7 +31,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const fetchUserRole = async (userId: string) => {
-    const supabase = createClient()
     const { data, error } = await supabase
       .from('users')
       .select('role')
@@ -46,7 +43,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const login = async (email: string, password: string) => {
-    const supabase = createClient()
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -55,7 +51,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const logout = async () => {
-    const supabase = createClient()
     await supabase.auth.signOut()
   }
 

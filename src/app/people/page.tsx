@@ -3,7 +3,7 @@
 import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import supabase from '@/lib/supabase/client'
 import { Employee } from '@/types/database'
 import { Plus, Search, MoreVertical } from 'lucide-react'
 
@@ -28,7 +28,6 @@ export default function PeoplePage() {
 
   const fetchEmployees = async () => {
     try {
-      const supabase = createClient()
       const { data, error } = await supabase
         .from('employees')
         .select('*')
@@ -46,7 +45,6 @@ export default function PeoplePage() {
   const handleAddEmployee = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const supabase = createClient()
       const { data, error } = await supabase
         .from('employees')
         .insert({
