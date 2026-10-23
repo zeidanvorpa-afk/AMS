@@ -51,15 +51,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const login = async (email: string, password: string) => {
+    console.log('AuthContext: Attempting login with', email)
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     })
-    if (error) throw error
-    
+    if (error) {
+      console.log('AuthContext: Login error', error)
+      throw error
+    }
+    console.log('AuthContext: Login successful', data)
+
     // Get the session after login
     const { data: { session } } = await supabase.auth.getSession()
-    
+    console.log('AuthContext: Session after login', session)
+
     // Manually update user state after successful login
     setUser(session?.user ?? null)
     if (session?.user) {
