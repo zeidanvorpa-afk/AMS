@@ -6,15 +6,7 @@
   "crons": [],
   "build": {
     "env": {
-      "VERCEL_FORCE_NO_BUILD_CACHE": "1",
-      "NEXT_PRIVATE_SKIP_ESLINT": "1",
-      "NEXT_PRIVATE_SKIP_TYPECHECK": "1"
-    }
-  },
-  "git": {
-    "deploymentEnabled": {
-      "main": true
+      "VERCEL_FORCE_NO_BUILD_CACHE": "1"
     }
   }
 }
-// Force redeploy to clear cache
