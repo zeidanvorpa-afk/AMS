@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // Force rebuild - Next.js 15.1.6 for Supabase compatibility
 };
 
 export default nextConfig;
