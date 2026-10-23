@@ -30,23 +30,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       setLoading(false)
     })
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (JSON.stringify(session?.user) !== JSON.stringify(user)) {
-        setUser(session?.user ?? null)
-        if (session?.user) {
-          fetchUserRole(session.user.id)
-        } else {
-          setUserRole(null)
-        }
-        setLoading(false)
-      }
-    })
-
-    return () => subscription.unsubscribe()
   }, [])
 
   const fetchUserRole = async (userId: string) => {
