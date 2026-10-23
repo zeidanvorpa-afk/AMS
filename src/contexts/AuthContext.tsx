@@ -57,10 +57,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
     if (error) throw error
     
+    // Get the session after login
+    const { data: { session } } = await supabase.auth.getSession()
+    
     // Manually update user state after successful login
-    setUser(data.user)
-    if (data.user) {
-      await fetchUserRole(data.user.id)
+    setUser(session?.user ?? null)
+    if (session?.user) {
+      await fetchUserRole(session.user.id)
     }
   }
 
