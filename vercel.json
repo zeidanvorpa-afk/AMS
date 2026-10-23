@@ -3,5 +3,10 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["iad1"],
-  "crons": []
+  "crons": [],
+  "build": {
+    "env": {
+      "VERCEL_FORCE_NO_BUILD_CACHE": "1"
+    }
+  }
 }
