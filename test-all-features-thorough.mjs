@@ -148,11 +148,11 @@ import { chromium } from 'playwright';
   console.log('6. Testing Logout...');
   const logoutButton = page.locator('button').filter({ hasText: '' }); // Try to find logout by icon
   // Click the logout button in the header (LogOut icon)
-  const buttons = await page.locator('button').all();
-  console.log(`Found ${buttons.length} buttons`);
+  const allButtons = await page.locator('button').all();
+  console.log(`Found ${allButtons.length} buttons`);
   // Try clicking the last button (logout should be in header)
-  if (buttons.length > 0) {
-    await buttons[buttons.length - 1].click();
+  if (allButtons.length > 0) {
+    await allButtons[allButtons.length - 1].click();
     await page.waitForTimeout(2000);
     const currentUrl = page.url();
     if (currentUrl.includes('/login')) {
