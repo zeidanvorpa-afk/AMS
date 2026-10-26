@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/server'
 
 export async function POST(request: NextRequest) {
   try {
@@ -22,9 +23,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: authError.message }, { status: 400 })
     }
 
-    // Create user record in public.users table
+    // Create user record in public.users table using admin client to bypass RLS
     if (authData.user) {
-      const { error: dbError } = await supabase
+      const { error: dbError } = await supabaseAdmin
         .from('users')
         .insert({
           id: authData.user.id,
