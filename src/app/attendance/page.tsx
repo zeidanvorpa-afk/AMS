@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
 import supabase from '@/lib/supabase/client'
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import { Employee, AttendanceStatus } from '@/types/database'
 import { Calendar, Check, X, Clock, FileText, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -84,15 +84,17 @@ export default function AttendancePage() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      const supabase = createClient()
-      const user = (await supabase.auth.getUser()).data.user
+      const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
       for (const [employeeId, status] of Object.entries(attendanceData)) {
-        await supabase
+        const employee = employees.find(emp => emp.employee_id === employeeId)
+        if (!employee) continue
+
+        await supabaseAdmin
           .from('attendance')
           .upsert({
-            employee_id: employeeId,
+            employee_id: employee.id,
             date: selectedDate,
             status,
             marked_by: user.id,
@@ -123,7 +125,7 @@ export default function AttendancePage() {
   const getStatusSummary = () => {
     const summary = { present: 0, absent: 0, late: 0, excused: 0, unmarked: 0 }
     employees.forEach(emp => {
-      const status = attendanceData[emp.id]
+      const status = attendanceData[emp.employee_id]
       if (status) {
         summary[status]++
       } else {
@@ -241,11 +243,11 @@ export default function AttendancePage() {
                     <td className="px-6 py-4">
                       <div className="flex gap-2">
                         {statusOptions.map((option) => {
-                          const isSelected = attendanceData[employee.id] === option.value
+                          const isSelected = attendanceData[employee.employee_id] === option.value
                           return (
                             <button
                               key={option.value}
-                              onClick={() => handleStatusChange(employee.id, option.value)}
+                              onClick={() => handleStatusChange(employee.employee_id, option.value)}
                               className={`
                                 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
                                 ${isSelected 

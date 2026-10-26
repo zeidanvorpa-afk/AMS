@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
 import supabase from '@/lib/supabase/client'
+import { supabaseAdmin } from '@/lib/supabase/server'
 import { Employee } from '@/types/database'
 import { Plus, Search, MoreVertical } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -54,7 +55,7 @@ export default function PeoplePage() {
   const handleAddEmployee = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('employees')
         .insert({
           employee_id: `EMP${Date.now()}`,

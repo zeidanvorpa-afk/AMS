@@ -10,13 +10,17 @@ interface HeaderProps {
 
 export default function Header({ title, subtitle }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false)
-  const [notificationCount] = useState(3)
+  const [notificationCount, setNotificationCount] = useState(3)
 
   const notifications = [
     { id: 1, title: 'New employee added', message: 'John Doe was added to Engineering', time: '2h ago' },
     { id: 2, title: 'Attendance marked', message: '12 employees marked present today', time: '4h ago' },
     { id: 3, title: 'Report generated', message: 'Monthly attendance report is ready', time: '1d ago' },
   ]
+
+  const handleMarkAllAsRead = () => {
+    setNotificationCount(0)
+  }
 
   return (
     <header className="bg-white/5 backdrop-blur-xl border-b border-white/10">
@@ -48,10 +52,10 @@ export default function Header({ title, subtitle }: HeaderProps) {
                 {showNotifications && (
                   <>
                     <div
-                      className="fixed inset-0 z-40"
+                      className="fixed inset-0 z-[10000]"
                       onClick={() => setShowNotifications(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-80 bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl z-[9999] overflow-hidden">
+                    <div className="absolute right-0 mt-2 w-80 bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl z-[10001] overflow-hidden">
                       <div className="p-4 border-b border-white/10">
                         <h3 className="font-semibold text-white text-left">Notifications</h3>
                       </div>
@@ -65,7 +69,10 @@ export default function Header({ title, subtitle }: HeaderProps) {
                         ))}
                       </div>
                       <div className="p-4 border-t border-white/10">
-                        <button className="w-full py-2 text-sm text-purple-400 hover:text-purple-300 transition-colors text-left">
+                        <button
+                          onClick={handleMarkAllAsRead}
+                          className="w-full py-2 text-sm text-purple-400 hover:text-purple-300 transition-colors text-left hover:bg-white/5 rounded-lg"
+                        >
                           Mark all as read
                         </button>
                       </div>
