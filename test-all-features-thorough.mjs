@@ -127,13 +127,13 @@ import { chromium } from 'playwright';
   console.log('4. Testing Reports...');
   await page.goto('https://ams-ame-a6d5.vercel.app/reports');
   await page.waitForLoadState('networkidle');
-  
-  // Try to export CSV
-  const exportButton = await page.isVisible('text=Export CSV');
+
+  // Try to export CSV - use better selector
+  const exportButton = await page.locator('button', { hasText: 'Export' }).isVisible();
   console.log('✅ Export CSV button visible:', exportButton);
-  
+
   if (exportButton) {
-    await page.click('text=Export CSV');
+    await page.locator('button', { hasText: 'Export' }).click();
     await page.waitForTimeout(1000);
     console.log('✅ Export CSV clicked');
   }
