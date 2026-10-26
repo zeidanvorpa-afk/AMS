@@ -2,19 +2,17 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
-import { 
-  Users, 
-  UserCheck, 
-  UserX, 
+import {
+  Users,
+  UserCheck,
+  UserX,
   Clock,
   TrendingUp,
-  TrendingDown,
   Calendar,
   ArrowUp,
   ArrowDown
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import supabase from '@/lib/supabase/client'
 import { DashboardStats } from '@/types/database'
 import { useRouter } from 'next/navigation'
 
@@ -38,46 +36,23 @@ export default function DashboardPage() {
   })
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    fetchDashboardStats()
-  }, [])
-
   const fetchDashboardStats = async () => {
     try {
-      const today = new Date().toISOString().split('T')[0]
+      const response = await fetch('/api/dashboard/stats')
+      if (!response.ok) throw new Error('Failed to fetch stats')
 
-      // Get total employees
-      const { count: totalEmployees } = await supabase
-        .from('employees')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'active')
-
-      // Get today's attendance
-      const { data: attendanceData } = await supabase
-        .from('attendance')
-        .select('status')
-        .eq('date', today)
-
-      const present = attendanceData?.filter(a => a.status === 'present').length || 0
-      const absent = attendanceData?.filter(a => a.status === 'absent').length || 0
-      const late = attendanceData?.filter(a => a.status === 'late').length || 0
-      const expected = totalEmployees || 0
-      const rate = expected > 0 ? Math.round((present / expected) * 100) : 0
-
-      setStats({
-        total_employees: totalEmployees || 0,
-        expected_today: expected,
-        present_today: present,
-        absent_today: absent,
-        late_today: late,
-        attendance_rate: rate
-      })
+      const data = await response.json()
+      setStats(data)
     } catch (error) {
       console.error('Error fetching dashboard stats:', error)
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchDashboardStats()
+  }, [])
 
   const statCards = [
     {
@@ -158,9 +133,6 @@ export default function DashboardPage() {
       userRole={userRole!}
       onLogout={logout}
     >
-      {/* Version marker - remove after deployment verification */}
-      <div className="text-xs text-gray-600 mb-2">v2-fix-2026-10-26</div>
-
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {statCards.map((stat) => (

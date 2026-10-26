@@ -3,8 +3,6 @@
 import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
-import supabase from '@/lib/supabase/client'
-import { supabaseAdmin } from '@/lib/supabase/server'
 import { Employee } from '@/types/database'
 import { Plus, Search, MoreVertical } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -32,18 +30,12 @@ export default function PeoplePage() {
     }
   }, [user, router])
 
-  useEffect(() => {
-    fetchEmployees()
-  }, [])
-
   const fetchEmployees = async () => {
     try {
-      const { data, error } = await supabase
-        .from('employees')
-        .select('*')
-        .order('created_at', { ascending: false })
+      const response = await fetch('/api/employees')
+      if (!response.ok) throw new Error('Failed to fetch employees')
 
-      if (error) throw error
+      const data = await response.json()
       setEmployees(data || [])
     } catch (error) {
       console.error('Error fetching employees:', error)
@@ -52,12 +44,19 @@ export default function PeoplePage() {
     }
   }
 
+  useEffect(() => {
+    fetchEmployees()
+  }, [])
+
   const handleAddEmployee = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const { data, error } = await supabaseAdmin
-        .from('employees')
-        .insert({
+      const response = await fetch('/api/employees', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           employee_id: `EMP${Date.now()}`,
           first_name: formData.first_name,
           last_name: formData.last_name,
@@ -67,11 +66,11 @@ export default function PeoplePage() {
           hire_date: formData.hire_date,
           status: 'active'
         })
-        .select()
-        .single()
+      })
 
-      if (error) throw error
+      if (!response.ok) throw new Error('Failed to add employee')
 
+      const data = await response.json()
       setEmployees([data, ...employees])
       setShowAddModal(false)
       setFormData({

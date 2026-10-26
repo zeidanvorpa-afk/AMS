@@ -3,8 +3,6 @@
 import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
-import supabase from '@/lib/supabase/client'
-import { supabaseAdmin } from '@/lib/supabase/server'
 import { Employee, AttendanceStatus } from '@/types/database'
 import { Calendar, Check, X, Clock, FileText, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -13,7 +11,7 @@ export default function AttendancePage() {
   const { user, userRole, logout } = useAuth()
   const router = useRouter()
   const [employees, setEmployees] = useState<Employee[]>([])
-  const [selectedDate, setSelectedDate] = useState('')
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
   const [attendanceData, setAttendanceData] = useState<Record<string, AttendanceStatus>>({})
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -25,28 +23,12 @@ export default function AttendancePage() {
     }
   }, [user, router])
 
-  useEffect(() => {
-    if (!selectedDate) {
-      setSelectedDate(new Date().toISOString().split('T')[0])
-    }
-  }, [])
-
-  useEffect(() => {
-    if (selectedDate) {
-      fetchEmployees()
-      fetchAttendance()
-    }
-  }, [selectedDate])
-
   const fetchEmployees = async () => {
     try {
-      const { data, error } = await supabase
-        .from('employees')
-        .select('*')
-        .eq('status', 'active')
-        .order('last_name', { ascending: true })
+      const response = await fetch('/api/employees?status=active')
+      if (!response.ok) throw new Error('Failed to fetch employees')
 
-      if (error) throw error
+      const data = await response.json()
       setEmployees(data || [])
     } catch (error) {
       console.error('Error fetching employees:', error)
@@ -57,22 +39,31 @@ export default function AttendancePage() {
 
   const fetchAttendance = async () => {
     try {
-      const { data, error } = await supabase
-        .from('attendance')
-        .select('employee_id, status')
-        .eq('date', selectedDate)
+      const response = await fetch(`/api/attendance?date=${selectedDate}`)
+      if (!response.ok) throw new Error('Failed to fetch attendance')
 
-      if (error) throw error
+      const data = await response.json()
 
       const attendanceMap: Record<string, AttendanceStatus> = {}
-      data?.forEach(record => {
-        attendanceMap[record.employee_id] = record.status
+      data?.forEach((record: any) => {
+        // Map by employee_id from employees table (EMPxxx format)
+        const empId = record.employees?.employee_id
+        if (empId) {
+          attendanceMap[empId] = record.status
+        }
       })
       setAttendanceData(attendanceMap)
     } catch (error) {
       console.error('Error fetching attendance:', error)
     }
   }
+
+  useEffect(() => {
+    if (selectedDate) {
+      fetchEmployees()
+      fetchAttendance()
+    }
+  }, [selectedDate])
 
   const handleStatusChange = (employeeId: string, status: AttendanceStatus) => {
     setAttendanceData(prev => ({
@@ -84,27 +75,30 @@ export default function AttendancePage() {
   const handleSave = async () => {
     setSaving(true)
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Not authenticated')
-
-      for (const [employeeId, status] of Object.entries(attendanceData)) {
+      const records = Object.entries(attendanceData).map(([employeeId, status]) => {
         const employee = employees.find(emp => emp.employee_id === employeeId)
-        if (!employee) continue
+        if (!employee) return null
 
-        await supabaseAdmin
-          .from('attendance')
-          .upsert({
-            employee_id: employee.id,
-            date: selectedDate,
-            status,
-            marked_by: user.id,
-            check_in_time: status === 'present' || status === 'late' ? '09:00' : null,
-            check_out_time: null,
-            notes: null
-          }, {
-            onConflict: 'employee_id,date'
-          })
-      }
+        return {
+          employee_id: employee.id, // Use UUID (foreign key)
+          date: selectedDate,
+          status,
+          marked_by: user?.id,
+          check_in_time: status === 'present' || status === 'late' ? '09:00' : null,
+          check_out_time: null,
+          notes: null
+        }
+      }).filter(Boolean)
+
+      const response = await fetch('/api/attendance/bulk', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ records })
+      })
+
+      if (!response.ok) throw new Error('Failed to save attendance')
 
       alert('Attendance saved successfully!')
     } catch (error) {

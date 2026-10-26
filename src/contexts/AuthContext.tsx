@@ -19,6 +19,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [userRole, setUserRole] = useState<UserRole | null>(null)
   const [loading, setLoading] = useState(true)
 
+  const fetchUserRole = async (userId: string) => {
+    const { data } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', userId)
+      .single()
+
+    if (data) {
+      setUserRole(data.role as UserRole)
+    }
+  }
+
   useEffect(() => {
     let isMounted = true
 
@@ -37,18 +49,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isMounted = false
     }
   }, [])
-
-  const fetchUserRole = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', userId)
-      .single()
-
-    if (data) {
-      setUserRole(data.role as UserRole)
-    }
-  }
 
   const login = async (email: string, password: string) => {
     console.log('AuthContext: Attempting login with', email)
