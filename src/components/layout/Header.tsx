@@ -22,8 +22,8 @@ export default function Header({ title, subtitle }: HeaderProps) {
     <header className="bg-white/5 backdrop-blur-xl border-b border-white/10">
       <div className="lg:pl-64">
         <div className="px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex items-start justify-between">
+            <div className="text-left">
               <h1 className="text-2xl font-bold text-white">{title}</h1>
               {subtitle && (
                 <p className="mt-1 text-sm text-gray-400">{subtitle}</p>
@@ -47,17 +47,17 @@ export default function Header({ title, subtitle }: HeaderProps) {
                 {/* Notifications Dropdown */}
                 {showNotifications && (
                   <>
-                    <div 
+                    <div
                       className="fixed inset-0 z-40"
                       onClick={() => setShowNotifications(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-80 bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl z-50 overflow-hidden">
+                    <div className="absolute right-0 mt-2 w-80 bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl z-[9999] overflow-hidden">
                       <div className="p-4 border-b border-white/10">
-                        <h3 className="font-semibold text-white">Notifications</h3>
+                        <h3 className="font-semibold text-white text-left">Notifications</h3>
                       </div>
                       <div className="max-h-96 overflow-y-auto">
                         {notifications.map((notification) => (
-                          <div key={notification.id} className="p-4 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer">
+                          <div key={notification.id} className="p-4 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer text-left">
                             <p className="font-medium text-white text-sm">{notification.title}</p>
                             <p className="text-xs text-gray-400 mt-1">{notification.message}</p>
                             <p className="text-xs text-gray-500 mt-2">{notification.time}</p>
@@ -65,7 +65,7 @@ export default function Header({ title, subtitle }: HeaderProps) {
                         ))}
                       </div>
                       <div className="p-4 border-t border-white/10">
-                        <button className="w-full py-2 text-sm text-purple-400 hover:text-purple-300 transition-colors">
+                        <button className="w-full py-2 text-sm text-purple-400 hover:text-purple-300 transition-colors text-left">
                           Mark all as read
                         </button>
                       </div>

@@ -120,7 +120,7 @@ export default function PeoplePage() {
       {/* Header Actions */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search employees..."
@@ -131,9 +131,9 @@ export default function PeoplePage() {
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl"
+          className="flex items-start gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 mt-0.5" />
           Add Employee
         </button>
       </div>
@@ -216,9 +216,9 @@ export default function PeoplePage() {
 
       {/* Add Employee Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
           <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl max-w-lg w-full p-6">
-            <h2 className="text-xl font-semibold text-white mb-4">Add Employee</h2>
+            <h2 className="text-xl font-semibold text-white mb-4 text-left">Add Employee</h2>
             <form onSubmit={handleAddEmployee} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>

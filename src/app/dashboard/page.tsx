@@ -162,7 +162,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {statCards.map((stat) => (
           <div key={stat.title} className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:bg-white/10 transition-all group">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-start justify-between mb-4">
               <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg group-hover:scale-110 transition-transform`}>
                 <stat.icon className="w-6 h-6 text-white" />
               </div>
@@ -180,11 +180,11 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 mb-8">
-        <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
+        <h2 className="text-lg font-semibold text-white mb-4 text-left">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <button 
+          <button
             onClick={() => router.push('/people')}
-            className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30 transition-all group"
+            className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/30 hover:from-purple-500/30 hover:to-pink-500/30 transition-all group"
           >
             <div className="p-3 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
               <Users className="w-5 h-5 text-white" />
@@ -194,9 +194,9 @@ export default function DashboardPage() {
               <span className="text-xs text-gray-400">Manage staff</span>
             </div>
           </button>
-          <button 
+          <button
             onClick={() => router.push('/attendance')}
-            className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 hover:from-blue-500/30 hover:to-cyan-500/30 transition-all group"
+            className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 hover:from-blue-500/30 hover:to-cyan-500/30 transition-all group"
           >
             <div className="p-3 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
               <Calendar className="w-5 h-5 text-white" />
@@ -206,9 +206,9 @@ export default function DashboardPage() {
               <span className="text-xs text-gray-400">Daily tracking</span>
             </div>
           </button>
-          <button 
+          <button
             onClick={() => router.push('/reports')}
-            className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-teal-500/20 to-emerald-500/20 border border-teal-500/30 hover:from-teal-500/30 hover:to-emerald-500/30 transition-all group"
+            className="flex items-start gap-4 p-4 rounded-xl bg-gradient-to-r from-teal-500/20 to-emerald-500/20 border border-teal-500/30 hover:from-teal-500/30 hover:to-emerald-500/30 transition-all group"
           >
             <div className="p-3 rounded-lg bg-gradient-to-br from-teal-500 to-emerald-500">
               <TrendingUp className="w-5 h-5 text-white" />

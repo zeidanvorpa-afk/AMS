@@ -140,9 +140,9 @@ export default function ReportsPage() {
     >
       {/* Filters */}
       <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 mb-6">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Calendar className="w-5 h-5 text-purple-400" />
+        <div className="flex flex-col sm:flex-row gap-4 items-start justify-between">
+          <div className="flex items-start gap-3">
+            <Calendar className="w-5 h-5 text-purple-400 mt-1" />
             <input
               type="month"
               value={selectedMonth}
@@ -152,9 +152,9 @@ export default function ReportsPage() {
           </div>
           <button
             onClick={exportReport}
-            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl"
+            className="flex items-start gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-xl"
           >
-            <Download className="w-4 h-4" />
+            <Download className="w-4 h-4 mt-0.5" />
             Export CSV
           </button>
         </div>
@@ -162,8 +162,8 @@ export default function ReportsPage() {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
-          <div className="flex items-center justify-between mb-2">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 text-left">
+          <div className="flex items-start justify-between mb-2">
             <TrendingUp className="w-5 h-5 text-green-400" />
             <span className="text-xs text-gray-400">Avg Attendance</span>
           </div>
@@ -176,8 +176,8 @@ export default function ReportsPage() {
               : 0}%
           </p>
         </div>
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
-          <div className="flex items-center justify-between mb-2">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 text-left">
+          <div className="flex items-start justify-between mb-2">
             <TrendingDown className="w-5 h-5 text-red-400" />
             <span className="text-xs text-gray-400">Total Absences</span>
           </div>
@@ -185,8 +185,8 @@ export default function ReportsPage() {
             {uniqueEmployees.reduce((sum: number, emp: any) => sum + calculateEmployeeStats(emp.id).absent, 0)}
           </p>
         </div>
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
-          <div className="flex items-center justify-between mb-2">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 text-left">
+          <div className="flex items-start justify-between mb-2">
             <Calendar className="w-5 h-5 text-blue-400" />
             <span className="text-xs text-gray-400">Days Tracked</span>
           </div>
@@ -194,8 +194,8 @@ export default function ReportsPage() {
             {new Set(reportData.map(r => r.date)).size}
           </p>
         </div>
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6">
-          <div className="flex items-center justify-between mb-2">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 text-left">
+          <div className="flex items-start justify-between mb-2">
             <Filter className="w-5 h-5 text-purple-400" />
             <span className="text-xs text-gray-400">Employees</span>
           </div>

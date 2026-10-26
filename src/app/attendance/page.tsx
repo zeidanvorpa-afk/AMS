@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import AppLayout from '@/components/layout/AppLayout'
 import { useState, useEffect } from 'react'
 import supabase from '@/lib/supabase/client'
+import { createClient } from '@supabase/supabase-js'
 import { Employee, AttendanceStatus } from '@/types/database'
 import { Calendar, Check, X, Clock, FileText, Save } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -158,9 +159,9 @@ export default function AttendancePage() {
     >
       {/* Date Selection */}
       <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 mb-6">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Calendar className="w-5 h-5 text-purple-400" />
+        <div className="flex flex-col sm:flex-row gap-4 items-start justify-between">
+          <div className="flex items-start gap-3">
+            <Calendar className="w-5 h-5 text-purple-400 mt-1" />
             <input
               type="date"
               value={selectedDate}
@@ -182,7 +183,7 @@ export default function AttendancePage() {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
         {statusOptions.map((option) => (
-          <div key={option.value} className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4">
+          <div key={option.value} className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 text-left">
             <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${option.gradient} flex items-center justify-center mb-2`}>
               <option.icon className="w-4 h-4 text-white" />
             </div>
@@ -190,7 +191,7 @@ export default function AttendancePage() {
             <p className="text-sm text-gray-400">{option.label}</p>
           </div>
         ))}
-        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4">
+        <div className="bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-4 text-left">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-gray-500 to-gray-600 flex items-center justify-center mb-2">
             <FileText className="w-4 h-4 text-white" />
           </div>
