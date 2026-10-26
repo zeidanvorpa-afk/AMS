@@ -224,63 +224,69 @@ export default function PeoplePage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1">First Name</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
+                    name="first_name"
                     value={formData.first_name}
                     onChange={(e) => setFormData({...formData, first_name: e.target.value})}
                     required
-                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white" 
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1">Last Name</label>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
+                    name="last_name"
                     value={formData.last_name}
                     onChange={(e) => setFormData({...formData, last_name: e.target.value})}
                     required
-                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white" 
+                    className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
                   />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
-                <input 
-                  type="email" 
+                <input
+                  type="email"
+                  name="email"
                   value={formData.email}
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
                   required
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white" 
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Department</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
+                  name="department"
                   value={formData.department}
                   onChange={(e) => setFormData({...formData, department: e.target.value})}
                   required
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white" 
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Position</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
+                  name="position"
                   value={formData.position}
                   onChange={(e) => setFormData({...formData, position: e.target.value})}
                   required
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white" 
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Hire Date</label>
-                <input 
-                  type="date" 
+                <input
+                  type="date"
+                  name="hire_date"
                   value={formData.hire_date}
                   onChange={(e) => setFormData({...formData, hire_date: e.target.value})}
                   required
-                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white" 
+                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 text-white"
                 />
               </div>
               <div className="flex gap-3 pt-4">
