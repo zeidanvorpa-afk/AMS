@@ -21,31 +21,50 @@ import { chromium } from 'playwright';
   console.log('2. Testing Add Employee...');
   await page.goto('https://ams-ame-a6d5.vercel.app/people');
   await page.waitForLoadState('networkidle');
-  await page.click('text=Add Employee');
-  await page.waitForTimeout(500);
 
-  // Fill the form using id selectors
-  const timestamp = Date.now();
-  await page.fill('#first_name', `Test${timestamp}`);
-  await page.fill('#last_name', 'Employee');
-  await page.fill('#email', `test${timestamp}@gmail.com`);
-  await page.fill('#department', 'Engineering');
-  await page.fill('#position', 'Senior Engineer');
-  await page.fill('#hire_date', '2026-01-15');
+  // Check if Add Employee button exists
+  const addEmployeeButton = page.locator('button').filter({ hasText: 'Add Employee' });
+  const buttonVisible = await addEmployeeButton.isVisible();
+  console.log('Add Employee button visible:', buttonVisible);
 
-  await page.click('button:has-text("Add Employee")');
-  await page.waitForTimeout(2000);
+  if (buttonVisible) {
+    await addEmployeeButton.click();
+    await page.waitForTimeout(2000);
 
-  const addSuccess = await page.isVisible('text=Employee added successfully');
-  console.log('✅ Add Employee form submitted');
-  if (addSuccess) {
-    console.log('✅ Employee added successfully!');
-  } else {
-    console.log('⚠️ Employee add may have failed - checking for error');
-    const errorVisible = await page.isVisible('text=Failed to add employee');
-    if (errorVisible) {
-      console.log('❌ Error: Failed to add employee');
+    // Check if modal is visible by looking for the modal overlay
+    const modalOverlay = page.locator('.fixed.inset-0');
+    const modalVisible = await modalOverlay.isVisible();
+    console.log('Modal overlay visible:', modalVisible);
+
+    if (modalVisible) {
+      // Fill the form using id selectors
+      const timestamp = Date.now();
+      await page.fill('#first_name', `Test${timestamp}`);
+      await page.fill('#last_name', 'Employee');
+      await page.fill('#email', `test${timestamp}@gmail.com`);
+      await page.fill('#department', 'Engineering');
+      await page.fill('#position', 'Senior Engineer');
+      await page.fill('#hire_date', '2026-01-15');
+
+      await page.click('button:has-text("Add Employee")');
+      await page.waitForTimeout(2000);
+
+      const addSuccess = await page.isVisible('text=Employee added successfully');
+      console.log('✅ Add Employee form submitted');
+      if (addSuccess) {
+        console.log('✅ Employee added successfully!');
+      } else {
+        console.log('⚠️ Employee add may have failed - checking for error');
+        const errorVisible = await page.isVisible('text=Failed to add employee');
+        if (errorVisible) {
+          console.log('❌ Error: Failed to add employee');
+        }
+      }
+    } else {
+      console.log('❌ Modal did not open');
     }
+  } else {
+    console.log('❌ Add Employee button not found');
   }
   console.log();
 
@@ -93,32 +112,9 @@ import { chromium } from 'playwright';
   }
   console.log();
 
-  // Test 5: Notifications Mark All as Read
+  // Test 5: Notifications Mark All as Read (Removed - notifications not implemented)
   console.log('5. Testing Notifications Mark All as Read...');
-  await page.goto('https://ams-ame-a6d5.vercel.app/dashboard');
-  await page.waitForLoadState('networkidle');
-  
-  // Try to open notifications
-  const svgElements = await page.locator('svg').all();
-  if (svgElements.length > 0) {
-    await svgElements[0].click();
-    await page.waitForTimeout(1000);
-    
-    const markAllReadVisible = await page.isVisible('text=Mark all as read');
-    console.log('✅ Mark all as read button visible:', markAllReadVisible);
-    
-    if (markAllReadVisible) {
-      await page.click('text=Mark all as read');
-      await page.waitForTimeout(500);
-      console.log('✅ Mark all as read clicked');
-    }
-    
-    // Close dropdown
-    await page.keyboard.press('Escape');
-    await page.waitForTimeout(500);
-  } else {
-    console.log('⚠️ Could not find notification bell icon');
-  }
+  console.log('⚠️ Notifications feature not implemented in current version');
   console.log();
 
   // Test 6: Logout
@@ -153,10 +149,10 @@ import { chromium } from 'playwright';
   console.log('=== THOROUGH TESTING COMPLETE ===');
   console.log('\nSummary:');
   console.log('- Login: ✅ Working');
-  console.log('- Add Employee: ✅ Form submitted (success depends on database)');
+  console.log('- Add Employee: ❌ Modal not opening - needs investigation');
   console.log('- Mark Attendance: ✅ Save button clicked (success depends on database)');
-  console.log('- Reports: ✅ Export button visible');
-  console.log('- Notifications: ✅ Mark all as read button visible');
+  console.log('- Reports: ❌ Export button not visible - needs investigation');
+  console.log('- Notifications: ⚠️ Not implemented in current version');
   console.log('- Logout: ✅ Working');
   console.log('- Signup: ✅ Form submitted (may be rate-limited)');
 
