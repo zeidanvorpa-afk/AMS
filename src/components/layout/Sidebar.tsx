@@ -14,10 +14,9 @@ import { useState } from 'react'
 
 interface SidebarProps {
   userRole: 'admin' | 'manager' | 'user'
-  onLogout: () => void
 }
 
-export default function Sidebar({ userRole, onLogout }: SidebarProps) {
+export default function Sidebar({ userRole }: SidebarProps) {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
 

@@ -21,9 +21,9 @@ export default function AppLayout({
 }: AppLayoutProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-pink-900/20">
-      <Sidebar userRole={userRole} onLogout={onLogout} />
+      <Sidebar userRole={userRole} />
       <div className="lg:pl-64">
-        <Header title={title} subtitle={subtitle} />
+        <Header title={title} subtitle={subtitle} onLogout={onLogout} />
         <main className="px-4 sm:px-6 lg:px-8 py-6">
           {children}
         </main>
