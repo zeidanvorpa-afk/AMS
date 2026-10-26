@@ -133,8 +133,8 @@ export default function DashboardPage() {
       userRole={userRole!}
       onLogout={logout}
     >
-      {/* Version marker - v3-api-routes-2026-10-26 */}
-      <div className="text-xs text-gray-600 mb-2">v3-api-routes-2026-10-26</div>
+      {/* Version marker - v4-deploy-fix-2026-10-26 */}
+      <div className="text-xs text-gray-600 mb-2">v4-deploy-fix-2026-10-26</div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
