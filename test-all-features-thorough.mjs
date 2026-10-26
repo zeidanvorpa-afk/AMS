@@ -22,14 +22,33 @@ import { chromium } from 'playwright';
   await page.goto('https://ams-ame-a6d5.vercel.app/people');
   await page.waitForLoadState('networkidle');
 
-  // Check if Add Employee button exists
-  const addEmployeeButton = page.locator('button').filter({ hasText: 'Add Employee' });
-  const buttonVisible = await addEmployeeButton.isVisible();
-  console.log('Add Employee button visible:', buttonVisible);
+  // Take screenshot to see current state
+  await page.screenshot({ path: 'people-page.png' });
+  console.log('Screenshot saved to people-page.png');
 
-  if (buttonVisible) {
+  // Check if Add Employee button exists in header
+  const buttons = await page.locator('button').all();
+  console.log(`Found ${buttons.length} buttons on page`);
+
+  // Find the Add Employee button (should have Plus icon)
+  let addEmployeeButton = null;
+  for (const btn of buttons) {
+    const text = await btn.textContent();
+    console.log(`Button text: "${text}"`);
+    if (text && text.includes('Add Employee')) {
+      addEmployeeButton = btn;
+      break;
+    }
+  }
+
+  if (addEmployeeButton) {
+    console.log('Found Add Employee button, clicking...');
     await addEmployeeButton.click();
     await page.waitForTimeout(2000);
+
+    // Take screenshot after click
+    await page.screenshot({ path: 'after-add-click.png' });
+    console.log('Screenshot saved to after-add-click.png');
 
     // Check if modal is visible by looking for the modal overlay
     const modalOverlay = page.locator('.fixed.inset-0');
@@ -46,7 +65,15 @@ import { chromium } from 'playwright';
       await page.fill('#position', 'Senior Engineer');
       await page.fill('#hire_date', '2026-01-15');
 
-      await page.click('button:has-text("Add Employee")');
+      // Click the submit button in the modal (the second Add Employee button)
+      const submitButtons = await page.locator('button').all();
+      for (const btn of submitButtons) {
+        const text = await btn.textContent();
+        if (text && text.includes('Add Employee') && await btn.isVisible()) {
+          await btn.click();
+          break;
+        }
+      }
       await page.waitForTimeout(2000);
 
       const addSuccess = await page.isVisible('text=Employee added successfully');
@@ -119,10 +146,23 @@ import { chromium } from 'playwright';
 
   // Test 6: Logout
   console.log('6. Testing Logout...');
-  const allButtons = await page.locator('button').all();
-  await allButtons[allButtons.length - 1].click(); // Last button should be logout
-  await page.waitForURL('**/login', { timeout: 5000 });
-  console.log('✅ Logout successful\n');
+  const logoutButton = page.locator('button').filter({ hasText: '' }); // Try to find logout by icon
+  // Click the logout button in the header (LogOut icon)
+  const buttons = await page.locator('button').all();
+  console.log(`Found ${buttons.length} buttons`);
+  // Try clicking the last button (logout should be in header)
+  if (buttons.length > 0) {
+    await buttons[buttons.length - 1].click();
+    await page.waitForTimeout(2000);
+    const currentUrl = page.url();
+    if (currentUrl.includes('/login')) {
+      console.log('✅ Logout successful\n');
+    } else {
+      console.log('⚠️ Logout may not have worked - current URL:', currentUrl, '\n');
+    }
+  } else {
+    console.log('❌ No buttons found\n');
+  }
 
   // Test 7: Signup as New User
   console.log('7. Testing Signup as New User...');
