@@ -225,6 +225,7 @@ export default function PeoplePage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1">First Name</label>
                   <input
+                    id="first_name"
                     type="text"
                     name="first_name"
                     value={formData.first_name}
@@ -236,6 +237,7 @@ export default function PeoplePage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-1">Last Name</label>
                   <input
+                    id="last_name"
                     type="text"
                     name="last_name"
                     value={formData.last_name}
@@ -248,6 +250,7 @@ export default function PeoplePage() {
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
                 <input
+                  id="email"
                   type="email"
                   name="email"
                   value={formData.email}
@@ -259,6 +262,7 @@ export default function PeoplePage() {
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Department</label>
                 <input
+                  id="department"
                   type="text"
                   name="department"
                   value={formData.department}
@@ -270,6 +274,7 @@ export default function PeoplePage() {
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Position</label>
                 <input
+                  id="position"
                   type="text"
                   name="position"
                   value={formData.position}
@@ -281,6 +286,7 @@ export default function PeoplePage() {
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">Hire Date</label>
                 <input
+                  id="hire_date"
                   type="date"
                   name="hire_date"
                   value={formData.hire_date}

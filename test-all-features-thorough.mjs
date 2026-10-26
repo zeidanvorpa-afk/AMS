@@ -23,23 +23,29 @@ import { chromium } from 'playwright';
   await page.waitForLoadState('networkidle');
   await page.click('text=Add Employee');
   await page.waitForTimeout(500);
-  
-  // Fill the form
+
+  // Fill the form using id selectors
   const timestamp = Date.now();
-  await page.fill('input[name="first_name"]', `Test${timestamp}`);
-  await page.fill('input[name="last_name"]', 'Employee');
-  await page.fill('input[name="email"]', `test${timestamp}@gmail.com`);
-  await page.fill('input[name="department"]', 'Engineering');
-  await page.fill('input[name="position"] = 'Senior Engineer');
-  await page.fill('input[name="hire_date"]', '2026-01-15');
-  
+  await page.fill('#first_name', `Test${timestamp}`);
+  await page.fill('#last_name', 'Employee');
+  await page.fill('#email', `test${timestamp}@gmail.com`);
+  await page.fill('#department', 'Engineering');
+  await page.fill('#position', 'Senior Engineer');
+  await page.fill('#hire_date', '2026-01-15');
+
   await page.click('button:has-text("Add Employee")');
   await page.waitForTimeout(2000);
-  
-  const addSuccess = await page.isVisible('text=Employee added successfully') || await page.isVisible('text=Add Employee');
+
+  const addSuccess = await page.isVisible('text=Employee added successfully');
   console.log('✅ Add Employee form submitted');
-  if (await page.isVisible('text=Employee added successfully')) {
+  if (addSuccess) {
     console.log('✅ Employee added successfully!');
+  } else {
+    console.log('⚠️ Employee add may have failed - checking for error');
+    const errorVisible = await page.isVisible('text=Failed to add employee');
+    if (errorVisible) {
+      console.log('❌ Error: Failed to add employee');
+    }
   }
   console.log();
 
@@ -129,7 +135,7 @@ import { chromium } from 'playwright';
   
   const signupTimestamp = Date.now();
   await page.fill('input#fullName', 'New Test User');
-  await page.fill('input[type="email"]`, `newuser${signupTimestamp}@gmail.com`);
+  await page.fill('input[type="email"]', `newuser${signupTimestamp}@gmail.com`);
   await page.fill('input[type="password"]', 'TestPassword123!');
   
   await page.click('button[type="submit"]');
