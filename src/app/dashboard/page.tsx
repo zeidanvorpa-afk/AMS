@@ -174,9 +174,9 @@ export default function DashboardPage() {
                 <span>{stat.trend}</span>
               </div>
             </div>
-            <h3 className="text-3xl font-bold text-white">{stat.value}</h3>
-            <p className="text-sm text-gray-400 mt-1">{stat.title}</p>
-            <p className="text-xs text-gray-500 mt-1">{stat.label}</p>
+            <h3 className="text-3xl font-bold text-white text-left">{stat.value}</h3>
+            <p className="text-sm text-gray-400 mt-1 text-left">{stat.title}</p>
+            <p className="text-xs text-gray-500 mt-1 text-left">{stat.label}</p>
           </div>
         ))}
       </div>
