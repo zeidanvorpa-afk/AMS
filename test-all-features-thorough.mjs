@@ -136,7 +136,7 @@ import { chromium } from 'playwright';
   await page.waitForLoadState('networkidle');
 
   // Try to export CSV - use better selector
-  const exportButton = await page.locator('button', { hasText: 'Export' }).isVisible();
+  const exportButton = await page.locator('#export-csv-btn').isVisible();
   console.log('✅ Export CSV button visible:', exportButton);
 
   if (exportButton) {
