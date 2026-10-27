@@ -219,7 +219,7 @@ export default function PeoplePage() {
 
       {/* Add Employee Modal - Outside AppLayout to avoid z-index conflicts */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[99999] p-4">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[999999] p-4">
           <div className="bg-slate-900/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl max-w-lg w-full p-6">
             <h2 className="text-xl font-semibold text-white mb-4 text-left">Add Employee</h2>
             <form onSubmit={handleAddEmployee} className="space-y-4">
