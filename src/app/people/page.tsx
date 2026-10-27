@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { Employee } from '@/types/database'
 import { Plus, Search, MoreVertical } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import AddEmployeeModal from '@/components/modals/AddEmployeeModal'
 
 export default function PeoplePage() {
   const { user, userRole, logout } = useAuth()
@@ -14,14 +15,6 @@ export default function PeoplePage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
-  const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    department: '',
-    position: '',
-    hire_date: ''
-  })
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -48,24 +41,14 @@ export default function PeoplePage() {
     fetchEmployees()
   }, [])
 
-  const handleAddEmployee = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleAddEmployee = async (employee: Omit<Employee, 'id' | 'created_at'>) => {
     try {
       const response = await fetch('/api/employees', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          employee_id: `EMP${Date.now()}`,
-          first_name: formData.first_name,
-          last_name: formData.last_name,
-          email: formData.email,
-          department: formData.department,
-          position: formData.position,
-          hire_date: formData.hire_date,
-          status: 'active'
-        })
+        body: JSON.stringify(employee)
       })
 
       if (!response.ok) throw new Error('Failed to add employee')
@@ -73,14 +56,6 @@ export default function PeoplePage() {
       const data = await response.json()
       setEmployees([data, ...employees])
       setShowAddModal(false)
-      setFormData({
-        first_name: '',
-        last_name: '',
-        email: '',
-        department: '',
-        position: '',
-        hire_date: ''
-      })
       alert('Employee added successfully!')
     } catch (error) {
       console.error('Error adding employee:', error)
